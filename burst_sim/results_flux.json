@@ -1,0 +1,287 @@
+{
+ "note": "Geant4 simulation, per beam electron, at 50 cm from the target. Order-of-magnitude until validated.",
+ "beam_energy_MeV": 200.0,
+ "score_radius_cm": 50.0,
+ "configs": {
+  "W 0.35 cm (1 X0)": {
+   "beam_electrons": 80000,
+   "neutrons_per_electron_total": 0.0043375,
+   "neutron_mean_energy_MeV": 1.6416120903299232,
+   "forward_0_10deg": {
+    "neutron_per_cm2": 2.0952126860468677e-07,
+    "neutron_above_1MeV_per_cm2": 1.5714095145351504e-07,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 4,
+    "photon_per_cm2": 0.02134304116736787,
+    "electron_positron_per_cm2": 0.002859965316453974,
+    "rough_dose_Gy": 2.193419373595119e-12,
+    "neutrons_per_Gy_per_cm2": 95522.66708635449
+   },
+   "side_80_100deg": {
+    "neutron_per_cm2": 9.165367885240116e-08,
+    "neutron_above_1MeV_per_cm2": 5.040952336882064e-08,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 40,
+    "photon_per_cm2": 1.1298607260529752e-05,
+    "electron_positron_per_cm2": 1.4847895974088986e-06,
+    "rough_dose_Gy": 4.712678859338738e-16,
+    "neutrons_per_Gy_per_cm2": 194483183.74331492
+   },
+   "back_120_150deg": {
+    "neutron_per_cm2": 1.761018532751304e-07,
+    "neutron_above_1MeV_per_cm2": 9.7834362930628e-08,
+    "neutron_above_10MeV_per_cm2": 4.348193908027912e-09,
+    "neutrons_counted": 81,
+    "photon_per_cm2": 2.7676254224597652e-05,
+    "electron_positron_per_cm2": 8.674646846515683e-07,
+    "rough_dose_Gy": 3.2770819102963287e-16,
+    "neutrons_per_Gy_per_cm2": 537373975.0655377
+   }
+  },
+  "W 1 cm": {
+   "beam_electrons": 80000,
+   "neutrons_per_electron_total": 0.019375,
+   "neutron_mean_energy_MeV": 1.2742776419479152,
+   "forward_0_10deg": {
+    "neutron_per_cm2": 7.333244401164037e-07,
+    "neutron_above_1MeV_per_cm2": 4.714228543605452e-07,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 14,
+    "photon_per_cm2": 0.01984407363145279,
+    "electron_positron_per_cm2": 0.0008287613779658384,
+    "rough_dose_Gy": 1.1593366176128596e-12,
+    "neutrons_per_Gy_per_cm2": 632537.9781640648
+   },
+   "side_80_100deg": {
+    "neutron_per_cm2": 4.74307788061176e-07,
+    "neutron_above_1MeV_per_cm2": 2.6350432670065334e-07,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 207,
+    "photon_per_cm2": 4.7501810407228213e-05,
+    "electron_positron_per_cm2": 2.9604138269325575e-06,
+    "rough_dose_Gy": 1.1301799908052818e-15,
+    "neutrons_per_Gy_per_cm2": 419674557.9641874
+   },
+   "back_120_150deg": {
+    "neutron_per_cm2": 6.761441526983402e-07,
+    "neutron_above_1MeV_per_cm2": 3.0654767051596776e-07,
+    "neutron_above_10MeV_per_cm2": 2.174096954013956e-09,
+    "neutrons_counted": 311,
+    "photon_per_cm2": 0.00011008757336345066,
+    "electron_positron_per_cm2": 1.6653582667746902e-06,
+    "rough_dose_Gy": 9.131113448189646e-16,
+    "neutrons_per_Gy_per_cm2": 740483793.717834
+   }
+  },
+  "W 2 cm": {
+   "beam_electrons": 80000,
+   "neutrons_per_electron_total": 0.04205,
+   "neutron_mean_energy_MeV": 1.1855801827391288,
+   "forward_0_10deg": {
+    "neutron_per_cm2": 1.8856914174421807e-06,
+    "neutron_above_1MeV_per_cm2": 6.809441229652319e-07,
+    "neutron_above_10MeV_per_cm2": 5.238031715117169e-08,
+    "neutrons_counted": 36,
+    "photon_per_cm2": 0.010189019292245917,
+    "electron_positron_per_cm2": 0.00023801616113492416,
+    "rough_dose_Gy": 4.007879374510017e-13,
+    "neutrons_per_Gy_per_cm2": 4704960.507132817
+   },
+   "side_80_100deg": {
+    "neutron_per_cm2": 1.0952614622861939e-06,
+    "neutron_above_1MeV_per_cm2": 5.430480472004769e-07,
+    "neutron_above_10MeV_per_cm2": 6.874025913930086e-09,
+    "neutrons_counted": 478,
+    "photon_per_cm2": 7.69272240027916e-05,
+    "electron_positron_per_cm2": 2.004924224896275e-06,
+    "rough_dose_Gy": 1.0887482357610243e-15,
+    "neutrons_per_Gy_per_cm2": 1005982307.3059833
+   },
+   "back_120_150deg": {
+    "neutron_per_cm2": 1.4892564134995598e-06,
+    "neutron_above_1MeV_per_cm2": 6.783182496523541e-07,
+    "neutron_above_10MeV_per_cm2": 4.348193908027912e-09,
+    "neutrons_counted": 685,
+    "photon_per_cm2": 0.00014119020438757432,
+    "electron_positron_per_cm2": 2.0306065550490346e-06,
+    "rough_dose_Gy": 1.1755622152565262e-15,
+    "neutrons_per_Gy_per_cm2": 1266846104.9291046
+   }
+  },
+  "W 5 cm": {
+   "beam_electrons": 80000,
+   "neutrons_per_electron_total": 0.053125,
+   "neutron_mean_energy_MeV": 1.0423827312290515,
+   "forward_0_10deg": {
+    "neutron_per_cm2": 1.4142685630816357e-06,
+    "neutron_above_1MeV_per_cm2": 3.6666222005820184e-07,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 27,
+    "photon_per_cm2": 0.0010406397608423278,
+    "electron_positron_per_cm2": 1.0004640575873793e-05,
+    "rough_dose_Gy": 2.2483750658871947e-14,
+    "neutrons_per_Gy_per_cm2": 62901807.82286759
+   },
+   "side_80_100deg": {
+    "neutron_per_cm2": 1.741419898195622e-06,
+    "neutron_above_1MeV_per_cm2": 6.621978297085983e-07,
+    "neutron_above_10MeV_per_cm2": 4.582683942620058e-09,
+    "neutrons_counted": 760,
+    "photon_per_cm2": 0.00011009898172144688,
+    "electron_positron_per_cm2": 1.5374904627490296e-06,
+    "rough_dose_Gy": 1.1410885576274774e-15,
+    "neutrons_per_Gy_per_cm2": 1526104075.4070292
+   },
+   "back_120_150deg": {
+    "neutron_per_cm2": 2.0001691976928394e-06,
+    "neutron_above_1MeV_per_cm2": 8.152863577552333e-07,
+    "neutron_above_10MeV_per_cm2": 4.348193908027912e-09,
+    "neutrons_counted": 920,
+    "photon_per_cm2": 0.00015559142261096275,
+    "electron_positron_per_cm2": 2.3001945773467653e-06,
+    "rough_dose_Gy": 1.3092624311171788e-15,
+    "neutrons_per_Gy_per_cm2": 1527706860.1029954
+   }
+  },
+  "W 2 cm + 5 cm lead": {
+   "beam_electrons": 80000,
+   "neutrons_per_electron_total": 0.0520875,
+   "neutron_mean_energy_MeV": 1.043635000057411,
+   "forward_0_10deg": {
+    "neutron_per_cm2": 2.5666355404074126e-06,
+    "neutron_above_1MeV_per_cm2": 1.0999866601746054e-06,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 49,
+    "photon_per_cm2": 0.001377183298538606,
+    "electron_positron_per_cm2": 2.2575916692154998e-05,
+    "rough_dose_Gy": 2.934192163660131e-14,
+    "neutrons_per_Gy_per_cm2": 87473328.16831513
+   },
+   "side_80_100deg": {
+    "neutron_per_cm2": 1.3702224988433972e-06,
+    "neutron_above_1MeV_per_cm2": 5.911662285979874e-07,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 598,
+    "photon_per_cm2": 9.323470481260508e-06,
+    "electron_positron_per_cm2": 1.7185064784825216e-07,
+    "rough_dose_Gy": 1.141165236383763e-16,
+    "neutrons_per_Gy_per_cm2": 12007222575.281853
+   },
+   "back_120_150deg": {
+    "neutron_per_cm2": 1.5631757099360343e-06,
+    "neutron_above_1MeV_per_cm2": 6.739700557443262e-07,
+    "neutron_above_10MeV_per_cm2": 2.174096954013956e-09,
+    "neutrons_counted": 719,
+    "photon_per_cm2": 7.896320136978688e-06,
+    "electron_positron_per_cm2": 7.609339339048845e-08,
+    "rough_dose_Gy": 7.782313052962439e-17,
+    "neutrons_per_Gy_per_cm2": 20086260977.91056
+   }
+  },
+  "W 2 cm + 10 cm lead": {
+   "beam_electrons": 80000,
+   "neutrons_per_electron_total": 0.0521125,
+   "neutron_mean_energy_MeV": 0.909096414837462,
+   "forward_0_10deg": {
+    "neutron_per_cm2": 2.880917443314443e-06,
+    "neutron_above_1MeV_per_cm2": 1.0999866601746054e-06,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 55,
+    "photon_per_cm2": 0.00016934556534973805,
+    "electron_positron_per_cm2": 1.4666488802328074e-06,
+    "rough_dose_Gy": 2.5747771741256997e-15,
+    "neutrons_per_Gy_per_cm2": 1118899713.833566
+   },
+   "side_80_100deg": {
+    "neutron_per_cm2": 1.4068839703843578e-06,
+    "neutron_above_1MeV_per_cm2": 4.926385238316562e-07,
+    "neutron_above_10MeV_per_cm2": 2.291341971310029e-09,
+    "neutrons_counted": 614,
+    "photon_per_cm2": 1.040269254974753e-06,
+    "electron_positron_per_cm2": 6.874025913930086e-09,
+    "rough_dose_Gy": 9.607179499149208e-18,
+    "neutrons_per_Gy_per_cm2": 146440895635.2849
+   },
+   "back_120_150deg": {
+    "neutron_per_cm2": 1.5218678678097692e-06,
+    "neutron_above_1MeV_per_cm2": 5.261314628713772e-07,
+    "neutron_above_10MeV_per_cm2": 4.348193908027912e-09,
+    "neutrons_counted": 700,
+    "photon_per_cm2": 7.84849000399038e-07,
+    "electron_positron_per_cm2": 4.348193908027912e-09,
+    "rough_dose_Gy": 6.842789966804902e-18,
+    "neutrons_per_Gy_per_cm2": 222404585730.74887
+   }
+  },
+  "W 2 cm + 5 cm polyethylene": {
+   "beam_electrons": 80000,
+   "neutrons_per_electron_total": 0.031075,
+   "neutron_mean_energy_MeV": 0.6088422422418155,
+   "forward_0_10deg": {
+    "neutron_per_cm2": 1.3095079287792922e-06,
+    "neutron_above_1MeV_per_cm2": 3.142819029070301e-07,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 25,
+    "photon_per_cm2": 0.009098146807255614,
+    "electron_positron_per_cm2": 0.0003137057194183672,
+    "rough_dose_Gy": 3.9579831606777874e-13,
+    "neutrons_per_Gy_per_cm2": 3308523.2443359983
+   },
+   "side_80_100deg": {
+    "neutron_per_cm2": 8.844580009256712e-07,
+    "neutron_above_1MeV_per_cm2": 1.878900416474224e-07,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 386,
+    "photon_per_cm2": 0.00013095248500233947,
+    "electron_positron_per_cm2": 1.4206320222122179e-06,
+    "rough_dose_Gy": 9.237329362334412e-16,
+    "neutrons_per_Gy_per_cm2": 957482369.8850502
+   },
+   "back_120_150deg": {
+    "neutron_per_cm2": 1.0696557013748661e-06,
+    "neutron_above_1MeV_per_cm2": 2.3697656798752118e-07,
+    "neutron_above_10MeV_per_cm2": 4.348193908027912e-09,
+    "neutrons_counted": 492,
+    "photon_per_cm2": 0.0001653944257766117,
+    "electron_positron_per_cm2": 8.761610724676242e-07,
+    "rough_dose_Gy": 7.998630631890855e-16,
+    "neutrons_per_Gy_per_cm2": 1337298533.4640992
+   }
+  },
+  "W 2 cm + 10 cm polyethylene": {
+   "beam_electrons": 80000,
+   "neutrons_per_electron_total": 0.0136875,
+   "neutron_mean_energy_MeV": 0.5786150385859704,
+   "forward_0_10deg": {
+    "neutron_per_cm2": 4.1904253720937354e-07,
+    "neutron_above_1MeV_per_cm2": 5.238031715117169e-08,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 8,
+    "photon_per_cm2": 0.00826498548264908,
+    "electron_positron_per_cm2": 0.00030270585281662115,
+    "rough_dose_Gy": 3.702413739059984e-13,
+    "neutrons_per_Gy_per_cm2": 1131809.0487525184
+   },
+   "side_80_100deg": {
+    "neutron_per_cm2": 3.620320314669846e-07,
+    "neutron_above_1MeV_per_cm2": 3.4370129569650437e-08,
+    "neutron_above_10MeV_per_cm2": 0.0,
+    "neutrons_counted": 158,
+    "photon_per_cm2": 0.0001569317202730526,
+    "electron_positron_per_cm2": 9.302848403518716e-07,
+    "rough_dose_Gy": 7.531903154135935e-16,
+    "neutrons_per_Gy_per_cm2": 480664745.75975496
+   },
+   "back_120_150deg": {
+    "neutron_per_cm2": 4.152525182166655e-07,
+    "neutron_above_1MeV_per_cm2": 8.478978120654427e-08,
+    "neutron_above_10MeV_per_cm2": 6.522290862041867e-09,
+    "neutrons_counted": 191,
+    "photon_per_cm2": 0.00017129057671589753,
+    "electron_positron_per_cm2": 7.37018867410731e-07,
+    "rough_dose_Gy": 6.868611162545236e-16,
+    "neutrons_per_Gy_per_cm2": 604565476.7605003
+   }
+  }
+ }
+}

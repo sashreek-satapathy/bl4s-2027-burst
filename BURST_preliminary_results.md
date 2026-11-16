@@ -98,6 +98,53 @@ Not knowing the layout costs a factor of 2 to 4 in data, not a factor of 100. Fa
 
 **Limits.** The scramble modelled is a permutation and inversion of address bits, which is common but not universal. A chip with an arbitrary lookup-table scramble or spare-row remapping would weaken the method. It also relies on few flips per pulse; at hundreds per pulse the chance pairs swamp the signal.
 
+### 7. What the CLEAR beam produces behind a converter (Geant4)
+Code: `burst_sim/flux_sim.py`. Numbers: `burst_sim/results_flux.json`. Raw histograms: `burst_sim/flux_raw/`.
+
+Geant4 (physics list QGSP_BIC_HP), 200 MeV electrons on a 5 cm diameter tungsten disc, 80,000 beam electrons per setup. Everything is per beam electron at 50 cm from the target, so it scales with bunch charge and with 1/distance². The 200 MeV beam energy is an assumption until the Beams & Detectors document is read. Geant4 photonuclear yields carry roughly a factor-2 model uncertainty.
+
+![flux vs angle](burst_sim/figures/fig8_flux_vs_angle.png)
+
+**Converter thickness.** Neutrons per beam electron: 0.004 (0.35 cm), 0.019 (1 cm), 0.042 (2 cm), 0.053 (5 cm). Most of the gain is reached by 2 cm.
+
+**Where to put the chip.** Neutrons leave almost evenly in all directions; photons and electrons are thrown forward.
+
+| Position (2 cm tungsten, no shield) | Neutrons per cm² | Photons per cm² | Photons per neutron |
+|---|---|---|---|
+| On the beam axis | 1.9e-6 | 1.0e-2 | about 5,400 |
+| At 90 degrees | 1.1e-6 | 7.7e-5 | about 70 |
+
+**What a shield does at 90 degrees.**
+
+| Shield | Neutrons per cm² | Neutrons above 1 MeV | Photons per cm² | Rough dose (Gy per beam electron) |
+|---|---|---|---|---|
+| None | 1.10e-6 | 5.4e-7 | 7.7e-5 | 1.1e-15 |
+| 10 cm lead | 1.41e-6 | 4.9e-7 | 1.0e-6 | 9.6e-18 |
+| 10 cm polyethylene | 3.6e-7 | 3.4e-8 | 1.6e-4 | 7.5e-16 |
+
+- **Lead is a neutron-pass filter.** It cuts photons 74-fold and dose over 100-fold while leaving the neutrons untouched.
+- **Polyethylene converts fast neutrons to slow ones.** It cuts neutrons above 1 MeV 16-fold and creates a thermal peak near 0.05 eV.
+
+![neutron spectrum](burst_sim/figures/fig9_neutron_spectrum.png)
+
+**The neutrons are about 1 MeV, not high-energy.** Mean energy 1.2 MeV; under 1% are above 10 MeV. Most published memory upset cross-sections are for neutrons above 10 or 20 MeV, so they do not apply directly. This is the single biggest uncertainty in the rate.
+
+**Rate estimate (cross-sections from memory, unverified).** Behind 10 cm of lead at 90 degrees and 50 cm: 8,800 neutrons per cm² per nC of beam. For a 16 Mbit memory:
+
+| Assumed upset cross-section per bit at about 1 MeV | Flips per µC of beam, one 16 Mbit chip | Beam charge for 2,000 flips with 16 chips |
+|---|---|---|
+| 1e-16 cm² (pessimistic) | 0.015 | 8,300 µC |
+| 1e-15 cm² | 0.15 | 830 µC |
+| 1e-14 cm² (optimistic) | 1.5 | 83 µC |
+
+If CLEAR delivers on the order of 0.1 µC per second (from memory, unverified), that is 14 minutes to 23 hours. Feasible across most of the range, marginal at the pessimistic end. Moving the chips from 50 cm to 35 cm doubles the rate.
+
+**Flips per pulse will be far below one,** which is exactly the regime where the layout-blind method of section 6 works best.
+
+**Dose is not a problem in the neutron field, and is the limit in the direct beam.** Behind lead the chip receives about 1.5e11 neutrons per cm² for each gray of dose. In the direct beam a chip takes roughly 1.7 Gy per nC per cm², so the direct-beam comparison must run at very low charge and will kill chips; budget several.
+
+**Design consequence.** Three shield states at 90 degrees give three different radiation fields from one geometry: bare (photon-dominated), lead (fast neutrons), polyethylene (slow neutrons plus photons). That separates the mechanisms Logan asked about without moving the chip.
+
 ## What this changes in the proposal
 
 1. **Sharper hypothesis.** "Failures from accumulation are fixed by adaptive scrubbing; failures from bursts are fixed only by interleaving. We measure which kind CLEAR produces." This is testable and has a prediction for each outcome.
@@ -108,7 +155,7 @@ Not knowing the layout costs a factor of 2 to 4 in data, not a factor of 100. Fa
 
 ## What is still not done
 
-- **Flip rate at CLEAR is unknown.** The rates used here (5 to 300 flips per pulse) are placeholders. Needs the Geant4 or FLUKA estimate and a literature cross-section.
+- **Upset cross-section at about 1 MeV is unknown.** Section 7 gives the neutron flux; the rate still spans a factor of 100 until a measured cross-section for the chosen chip at these energies is found. Slow-neutron sensitivity (boron-10 content) is also unknown.
 - **CLEAR beam parameters not read.** The 2027 Beams & Detectors document is over 10 MB and did not download in this session. Read it for energy, charge per pulse, repetition rate, and whether own electronics are allowed.
 - **Line-shaped clusters and a geometric size distribution are assumptions.** Real multi-cell upsets depend on the cell layout.
 - **Within-pulse timing is not modelled**, because a CLEAR bunch is far shorter than any readout. "Time clustering" here means pulse-to-pulse.

@@ -24,6 +24,7 @@ Working repo for our entry to CERN's [Beamline for Schools 2027](https://beamlin
 - Even 2% of flips arriving as adjacent pairs raises Hamming(7,4) failures about 65-fold when a word's bits are physical neighbours. Interleaving the bits removes the effect.
 - A spatial test needs a few hundred flips to detect clustering; a time-only test needs thousands to tens of thousands.
 - Clusters can be detected and sized from logical addresses alone, without the chip's physical layout, at a cost of 2 to 4 times more data.
+- Geant4: a 2 cm tungsten converter gives about 0.04 neutrons per 200 MeV electron, at about 1 MeV, evenly in all directions. At 90 degrees, 10 cm of lead removes 99% of the photons and none of the neutrons.
 - Adaptive scrubbing cuts failures from accumulated flips by about 40% but does almost nothing against bursts.
 
 ![Decoder result](burst_sim/figures/fig3_decoder.png)
@@ -35,13 +36,16 @@ cd burst_sim
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python burst_sim.py
+.venv/bin/python blind_bitmap.py
 ```
 
-Takes about 20 seconds. Rewrites `figures/` and `results.json`. The random seed is fixed, so results reproduce exactly.
+These two take under 30 seconds together and rewrite `figures/` and the results JSON files. The random seed is fixed, so results reproduce exactly.
+
+The beam simulation needs Geant4 (`pip install geant4-pybind`, plus a 2 GB data download on first use): `.venv/bin/python flux_sim.py all --events 10000`, about 10 minutes on a laptop.
 
 ## Biggest open questions
 
-1. Expected flips per pulse at CLEAR (needs a yield and cross-section estimate).
+1. The upset cross-section of the chosen chip for neutrons of about 1 MeV. The flux is now simulated; this is what the rate still depends on.
 2. Which memory devices to use, and whether their address scrambling is the simple kind our layout-blind method assumes.
 3. CLEAR beam parameters and whether teams may bring their own electronics.
 
