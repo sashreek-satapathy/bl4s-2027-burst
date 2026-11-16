@@ -23,6 +23,7 @@ Working repo for our entry to CERN's [Beamline for Schools 2027](https://beamlin
 - Pulse-to-pulse charge jitter fakes a clustering signal unless each pulse is normalised to its measured charge.
 - Even 2% of flips arriving as adjacent pairs raises Hamming(7,4) failures about 65-fold when a word's bits are physical neighbours. Interleaving the bits removes the effect.
 - A spatial test needs a few hundred flips to detect clustering; a time-only test needs thousands to tens of thousands.
+- Clusters can be detected and sized from logical addresses alone, without the chip's physical layout, at a cost of 2 to 4 times more data.
 - Adaptive scrubbing cuts failures from accumulated flips by about 40% but does almost nothing against bursts.
 
 ![Decoder result](burst_sim/figures/fig3_decoder.png)
@@ -41,7 +42,7 @@ Takes about 20 seconds. Rewrites `figures/` and `results.json`. The random seed 
 ## Biggest open questions
 
 1. Expected flips per pulse at CLEAR (needs a yield and cross-section estimate).
-2. A memory device whose physical bit layout is known, which the spatial test depends on.
+2. Which memory devices to use, and whether their address scrambling is the simple kind our layout-blind method assumes.
 3. CLEAR beam parameters and whether teams may bring their own electronics.
 
 ## Competition rules that matter

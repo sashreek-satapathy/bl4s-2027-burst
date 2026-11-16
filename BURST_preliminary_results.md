@@ -63,11 +63,46 @@ Beam alternating between 30 and 300 flips per pulse; a controller scrubs faster 
 - Interleaved layout: 38 to 40% fewer uncorrectable words at every scrub budget, for independent and bursty flips alike.
 - Side-by-side layout with bursty flips, 1,200 scrubs: 54,849 fixed against 53,614 adaptive, a 2% gain. Those failures happen inside a single pulse, so no scrub schedule can prevent them.
 
+### 6. Clusters can be found without knowing the chip's layout
+Code: `burst_sim/blind_bitmap.py`. Numbers: `burst_sim/results_blind.json`.
+
+A real memory scrambles logical addresses before they reach a physical row and column, and manufacturers rarely publish the map. We hid the injected clusters behind an unknown scramble and gave the analysis only what the microcontroller would log: pulse number, word address, bit number.
+
+**Method.** For every pair of flips in the same pulse, take the XOR of the two logical addresses. Unrelated pairs spread over about a million possible values. Physical neighbours give the same few values again and again.
+
+![signatures](burst_sim/figures/fig6_blind_signatures.png)
+
+| Flips recorded | Injected mean cluster | Recovered, layout known | Recovered, layout unknown | Shuffled control |
+|---|---|---|---|---|
+| 2,070 | 1.491 | 1.490 | 1.465 | 1.000 |
+| 10,067 | 1.497 | 1.497 | 1.488 | 1.000 |
+| 99,040 | 1.499 | 1.498 | 1.499 | 1.000 |
+
+The shuffled control never learned a single false signature.
+
+![blind power](burst_sim/figures/fig7_blind_power.png)
+
+Flips needed for a 95% chance of detection at a 0.1% false-alarm threshold:
+
+| Mean cluster size | Layout known | Layout unknown |
+|---|---|---|
+| 1.02 | 500 | 2,000 |
+| 1.05 | 200 | 500 |
+| 1.10 | 100 | 200 |
+| 1.20 | 100 | 200 |
+| 1.50 | 100 | 100 |
+
+Not knowing the layout costs a factor of 2 to 4 in data, not a factor of 100. False-alarm rate on independent data at a 5% threshold: 3.2%.
+
+**The decoder question needs no layout at all.** Counting words that hold two or more flips after one pulse uses only logical addresses. In 100,000 bursty flips: 5 such words on an interleaved chip (shuffled control 2), 5,157 on a side-by-side chip (shuffled control 3). So the experiment tells us directly whether a given chip's own layout protects a code against bursts.
+
+**Limits.** The scramble modelled is a permutation and inversion of address bits, which is common but not universal. A chip with an arbitrary lookup-table scramble or spare-row remapping would weaken the method. It also relies on few flips per pulse; at hundreds per pulse the chance pairs swamp the signal.
+
 ## What this changes in the proposal
 
 1. **Sharper hypothesis.** "Failures from accumulation are fixed by adaptive scrubbing; failures from bursts are fixed only by interleaving. We measure which kind CLEAR produces." This is testable and has a prediction for each outcome.
-2. **The spatial test carries the experiment**, and it needs the physical position of each bit. Commercial memories scramble logical addresses. Either pick a device with a published or reverse-engineered bitmap, or the spatial test is not available and the flip target rises from hundreds to tens of thousands. This is now the top feasibility question for device choice.
-3. **Flip target: about 1,000 per configuration** covers clusters down to 2% with margin. Convert to beam time once the upset cross-section is estimated.
+2. **The spatial test carries the experiment, and it no longer depends on a published bitmap.** Section 6 shows clusters can be detected and sized from logical addresses alone. A known bitmap is still better and remains a plus when choosing a device, but it is not a kill criterion.
+3. **Flip target: about 2,000 per configuration** covers clusters down to 2% even with the layout unknown. Convert to beam time once the upset cross-section is estimated. Keep the rate to a few flips per pulse.
 4. **Controls to name explicitly:** per-pulse charge normalisation, shuffled-address control, beam-off run.
 5. **If no upsets are seen:** the 95% upper limit on cross-section per bit is 3.0 / (fluence × number of bits).
 
