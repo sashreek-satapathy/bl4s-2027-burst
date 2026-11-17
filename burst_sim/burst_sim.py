@@ -61,6 +61,12 @@ WORD = 7                         # Hamming(7,4) codeword length
 WORDS_PER_ROW = COLS // WORD     # 128
 # Line-shaped clusters: a secondary particle crossing the die at an angle.
 DIRS = np.array([(0, 1), (1, 0), (1, 1), (1, -1)])
+SHAPES = {
+    "line": 0.025,
+    "compact": 0.575,
+    "diagonal": 0.20,
+    "branch": 0.20,
+}
 # Forward half of the 8-neighbourhood (each adjacent pair counted once).
 FWD = [(0, 1), (1, -1), (1, 0), (1, 1)]
 
@@ -68,35 +74,127 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 FIG = os.path.join(HERE, "figures")
 os.makedirs(FIG, exist_ok=True)
 
+def make_cluster(rng, r0, c0, k, shape):
+    """
+    Generate k unique cells around a seed cell.
+    Coordinates are clipped at memory boundaries.
+    """
+    if k < 1:
+        raise ValueError("Cluster size must be at least 1")
+
+    cells = {(0, 0)}
+
+    if shape == "line":
+        dr, dc = DIRS[rng.integers(0, len(DIRS))]
+        for j in range(1, k):
+            cells.add((j * dr, j * dc))
+
+    elif shape == "diagonal":
+        dr, dc = DIRS[rng.choice([2, 3])]
+        for j in range(1, k):
+            cells.add((j * dr, j * dc))
+
+    elif shape == "compact":
+        radius = max(2, int(np.ceil(np.sqrt(k))))
+        while len(cells) < k:
+            dr = rng.integers(-radius, radius + 1)
+            dc = rng.integers(-radius, radius + 1)
+            cells.add((dr, dc))
+
+    elif shape == "branch":
+        while len(cells) < k:
+            cell_list = list(cells)
+            parent = cell_list[rng.integers(len(cell_list))]
+            dr, dc = DIRS[rng.integers(len(DIRS))]
+            cells.add((parent[0] + dr, parent[1] + dc))
+
+    else:
+        raise ValueError("Unknown cluster shape")
+
+    result = []
+
+    for dr, dc in cells:
+        r = r0 + dr
+        c = c0 + dc
+
+        if 0 <= r < ROWS and 0 <= c < COLS:
+            result.append((r, c))
+
+    return result
+
 
 def generate(rng, n_pulses, rate, q=0.0, charge_cv=0.0):
-    """Inject flips. Returns (pulse, row, col, true_cluster_sizes, charge).
-
-    rate      : mean flipped bits per pulse at nominal charge
-    q         : burst strength. Cluster size k has P(k) = (1-q) q^(k-1), so the
-                mean size is 1/(1-q). q = 0 means fully independent flips.
-    charge_cv : pulse-to-pulse relative jitter of the bunch charge (a confound:
-                it makes counts overdispersed with no clustering at all).
     """
+    Generate particle-induced memory bit flips.
+    q controls mean cluster multiplicity.
+    charge_cv controls pulse-to-pulse charge variation.
+    """
+
+    if not 0 <= q < 1:
+        raise ValueError("q must be between 0 and 1")
+
     charge = np.ones(n_pulses)
+
     if charge_cv > 0:
         shape = 1.0 / charge_cv**2
         charge = rng.gamma(shape, 1.0 / shape, n_pulses)
+
     mean_k = 1.0 / (1.0 - q)
-    n_events = rng.poisson(rate / mean_k * charge)
-    ev_pulse = np.repeat(np.arange(n_pulses), n_events)
+
+    n_events = rng.poisson(
+        rate / mean_k * charge
+    )
+
+    ev_pulse = np.repeat(
+        np.arange(n_pulses), n_events
+    )
+
     n_ev = ev_pulse.size
-    k = rng.geometric(1.0 - q, n_ev) if q > 0 else np.ones(n_ev, dtype=int)
-    r0 = rng.integers(0, ROWS, n_ev)
-    c0 = rng.integers(0, COLS, n_ev)
-    d = DIRS[rng.integers(0, 4, n_ev)]
-    idx = np.repeat(np.arange(n_ev), k)
-    step = np.arange(k.sum()) - np.repeat(np.cumsum(k) - k, k)
-    row = (r0[idx] + step * d[idx, 0]) % ROWS
-    col = (c0[idx] + step * d[idx, 1]) % COLS
-    return ev_pulse[idx], row, col, k, charge
 
+    k_target = (
+        rng.geometric(1.0 - q, n_ev)
+        if q > 0
+        else np.ones(n_ev, dtype=int)
+    )
 
+    shape_names = list(SHAPES.keys())
+    shape_probs = list(SHAPES.values())
+
+    if not np.isclose(sum(shape_probs), 1.0):
+        raise ValueError("SHAPES probabilities must sum to 1")
+
+    all_pulse = []
+    all_row = []
+    all_col = []
+    actual_sizes = []
+
+    for i in range(n_ev):
+        r0 = rng.integers(0, ROWS)
+        c0 = rng.integers(0, COLS)
+
+        shape_name = rng.choice(
+            shape_names, p=shape_probs
+        )
+
+        cells = make_cluster(
+            rng, r0, c0, int(k_target[i]), shape_name
+        )
+
+        actual_sizes.append(len(cells))
+
+        for r, c in cells:
+            all_pulse.append(ev_pulse[i])
+            all_row.append(r)
+            all_col.append(c)
+
+    return (
+        np.asarray(all_pulse, dtype=int),
+        np.asarray(all_row, dtype=int),
+        np.asarray(all_col, dtype=int),
+        np.asarray(actual_sizes, dtype=int),
+        charge
+    )
+   
 def shuffle_control(rng, pulse):
     """Same number of flips in every pulse, addresses redrawn at random."""
     n = pulse.size
@@ -405,28 +503,50 @@ def main():
         flips_needed_fano={str(k): needed(v) for k, v in power["fano"].items()},
         flips_needed_adjacency={str(k): needed(v) for k, v in power["adjacency"].items()},
         curves={t: {str(k): v for k, v in d.items()} for t, d in power.items()})
-    # false-positive check on independent data
+      # False-positive check on independent data
+    FP_REPS = 5000
     fp_f = fp_a = 0
-    for _ in range(2000):
+
+    for _ in range(FP_REPS):
         p, r, c, _, _ = generate(rng, 400, RATE, q=0.0)
-        fp_f += fano_test(np.bincount(p, minlength=400))[1] < 0.05
-        fp_a += adjacency_test(p, r, c, 400)[2] < 0.05
-    res["power"]["false_positive_rate_at_0.05"] = dict(fano=fp_f / 2000,
-                                                      adjacency=fp_a / 2000)
+
+        counts = np.bincount(p, minlength=400)
+
+        fp_f += fano_test(counts)[1] < ALPHA
+        fp_a += adjacency_test(p, r, c, 400)[2] < ALPHA
+
+        res["power"]["false_positive_rate_at_alpha"] = {
+        "alpha": ALPHA,
+        "fano": fp_f / FP_REPS,
+        "adjacency": fp_a / FP_REPS
+    }
+
     fig, axes = plt.subplots(1, 2, figsize=(10, 3.8), sharey=True)
     shades = ["#9ec5f4", "#6da7ec", "#3987e5", "#1c5cab", "#0d366b"]
-    for ax, (test, ttl) in zip(axes, [("adjacency", "Spatial test (adjacent pairs)"),
-                                      ("fano", "Time test (Fano factor)")]):
+
+    for ax, (test, ttl) in zip(
+        axes,
+        [("adjacency", "Spatial test (adjacent pairs)"),
+         ("fano", "Time test (Fano factor)")]
+    ):
         for mk, colr in zip(means, shades):
-            ax.plot(budgets, power[test][mk], marker="o", color=colr,
-                    label=f"{mk:.2f}")
+            ax.plot(
+                budgets, power[test][mk],
+                marker="o", color=colr,
+                label=f"{mk:.2f}"
+            )
+
         ax.axhline(0.95, color=INK2, lw=1, ls="--")
         ax.set_xscale("log")
         ax.set_xlabel("total flips recorded")
         ax.set_title(ttl)
+
     axes[0].set_ylabel("chance of detecting the clustering")
-    axes[1].legend(title="mean cluster size", loc="center left",
-                   bbox_to_anchor=(1.0, 0.5))
+    axes[1].legend(
+        title="mean cluster size",
+        loc="center left",
+        bbox_to_anchor=(1.0, 0.5)
+    )
     save(fig, "fig4_power.png")
 
     # ---- 5. Adaptive scrubbing under a changing beam ----
