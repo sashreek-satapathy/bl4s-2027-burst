@@ -11,6 +11,7 @@ Working repo for our entry to CERN's [Beamline for Schools 2027](https://beamlin
 | File | What it is |
 |---|---|
 | [BURST_preliminary_results.md](BURST_preliminary_results.md) | Results of the fault-injection simulation, what they change in the proposal, open problems, team roles |
+| [radiation_estimates.md](radiation_estimates.md) | Upset rates and memory needed for a real chip, from published cross-sections (Logan) |
 | [Idea.docx](Idea.docx) | The proposal plan and outline |
 | [Reading and Learning.docx](Reading%20and%20Learning.docx) | Reading list, in suggested order |
 | [SUGGESTED UPGRADES.docx](SUGGESTED%20UPGRADES.docx) | Proposed upgrades to the base idea |
@@ -25,6 +26,7 @@ Working repo for our entry to CERN's [Beamline for Schools 2027](https://beamlin
 - A spatial test needs a few hundred flips to detect clustering; a time-only test needs thousands to tens of thousands.
 - Clusters can be detected and sized from logical addresses alone, without the chip's physical layout, at a cost of 2 to 4 times more data.
 - Geant4: a 2 cm tungsten converter gives about 0.04 neutrons per 200 MeV electron, at about 1 MeV, evenly in all directions. At 90 degrees, 10 cm of lead removes 99% of the photons and none of the neutrons.
+- With a real 40 nm SRAM and published cross-sections, one 4 MiB chip gets about 0.004 to 0.014 neutron-induced flips per pulse at 30 nC. A few chips and an hour or two of beam give 2,000 flips.
 - Adaptive scrubbing cuts failures from accumulated flips by about 40% but does almost nothing against bursts.
 
 ![Decoder result](burst_sim/figures/fig3_decoder.png)
@@ -37,6 +39,7 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python burst_sim.py
 .venv/bin/python blind_bitmap.py
+.venv/bin/python rate_calc.py      # uses the committed Geant4 output in flux_raw/
 ```
 
 These two take under 30 seconds together and rewrite `figures/` and the results JSON files. The random seed is fixed, so results reproduce exactly.
@@ -45,7 +48,7 @@ The beam simulation needs Geant4 (`pip install geant4-pybind`, plus a 2 GB data 
 
 ## Biggest open questions
 
-1. The upset cross-section of the chosen chip for neutrons of about 1 MeV. The flux is now simulated; this is what the rate still depends on.
+1. The chip's neutron cross-section below 1.2 MeV. It is measured at 1.2 MeV only, and most simulated neutrons are softer, so the rate is uncertain by a factor of about 3.
 2. Which memory devices to use, and whether their address scrambling is the simple kind our layout-blind method assumes.
 3. CLEAR beam parameters and whether teams may bring their own electronics.
 

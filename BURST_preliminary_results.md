@@ -127,9 +127,9 @@ Geant4 (physics list QGSP_BIC_HP), 200 MeV electrons on a 5 cm diameter tungsten
 
 ![neutron spectrum](burst_sim/figures/fig9_neutron_spectrum.png)
 
-**The neutrons are about 1 MeV, not high-energy.** Mean energy 1.2 MeV; under 1% are above 10 MeV. Most published memory upset cross-sections are for neutrons above 10 or 20 MeV, so they do not apply directly. This is the single biggest uncertainty in the rate.
+**The neutrons are about 1 MeV, not high-energy.** Mean energy 1.2 MeV with no shield and 0.87 MeV behind 10 cm of lead; under 1% are above 10 MeV. Most published memory upset cross-sections are for neutrons above 10 or 20 MeV, so they do not apply directly. This is the single biggest uncertainty in the rate.
 
-**Rate estimate (cross-sections from memory, unverified).** Behind 10 cm of lead at 90 degrees and 50 cm: 8,800 neutrons per cm² per nC of beam. For a 16 Mbit memory:
+**First rate estimate (cross-sections from memory; superseded by section 8).** Behind 10 cm of lead at 90 degrees and 50 cm: 8,800 neutrons per cm² per nC of beam. For a 16 Mbit memory:
 
 | Assumed upset cross-section per bit at about 1 MeV | Flips per µC of beam, one 16 Mbit chip | Beam charge for 2,000 flips with 16 chips |
 |---|---|---|
@@ -145,6 +145,28 @@ If CLEAR delivers on the order of 0.1 µC per second (from memory, unverified), 
 
 **Design consequence.** Three shield states at 90 degrees give three different radiation fields from one geometry: bare (photon-dominated), lead (fast neutrons), polyethylene (slow neutrons plus photons). That separates the mechanisms Logan asked about without moving the chip.
 
+### 8. Upset rate with a real chip and published cross-sections (Logan's estimate)
+
+Logan's write-up is in [radiation_estimates.md](radiation_estimates.md). It replaces the remembered cross-sections in the table above with measured ones for one reference chip, the ISSI IS61WV204816BLL (40 nm SRAM, 4 MiB): 1.61e-15 cm² per bit for 1.2 MeV neutrons and (4.74 ± 2.20)e-18 cm² per bit for 200 MeV electrons. All of Logan's arithmetic reproduces exactly in [burst_sim/rate_calc.py](burst_sim/rate_calc.py).
+
+Assumed beam: 30 nC per pulse for the neutron arm, 0.01 nC per pulse on 1 cm² for the direct arm, 10 Hz.
+
+| | Flips per pulse, one chip | One chip, minutes for 1,000 flips |
+|---|---|---|
+| Neutrons, 50 cm, σ(1.2 MeV) for all neutrons (Logan) | 0.014 | 117 |
+| Neutrons, 50 cm, σ = 0 below 0.5 MeV | 0.0094 | 178 |
+| Neutrons, 50 cm, σ = 0 below 1 MeV | 0.0043 | 389 |
+| Same three, at 30 cm | 0.040 / 0.026 / 0.012 | 42 / 64 / 140 |
+| Direct electrons, 1 cm² | 0.0099 (0.005 to 0.015 at 1σ) | 168 |
+
+**The spectrum matters.** Behind 10 cm of lead the neutrons average 0.87 MeV; 30% are above 1 MeV and 66% above 0.5 MeV. The cross-section is known here only at 1.2 MeV, so the two "σ = 0 below" rows are bounding cases. The real rate is likely between them and Logan's number until σ(E) from the Cecchetto paper is folded with the spectrum.
+
+**Chips against beam time.** For 2,000 flips at 30 cm, the neutron arm needs 2 to 5 chips for one hour of beam, or 1 to 3 chips for two hours. More memory and more beam time trade off directly.
+
+![chips vs time](burst_sim/figures/fig10_chips_vs_time.png)
+
+**The direct-electron arm is limited by dose, not memory.** Only chips inside the ~1 cm² beam count; adding memory means stacking boards along the beam, not yet simulated. Each pulse gives about 0.017 Gy(Si), so 1,000 flips on one chip costs about 1.7 kGy. The dose per flip is fixed by the cross-section, so lowering the charge only stretches the time. Whether this chip survives that dose needs checking.
+
 ## What this changes in the proposal
 
 1. **Sharper hypothesis.** "Failures from accumulation are fixed by adaptive scrubbing; failures from bursts are fixed only by interleaving. We measure which kind CLEAR produces." This is testable and has a prediction for each outcome.
@@ -155,7 +177,8 @@ If CLEAR delivers on the order of 0.1 µC per second (from memory, unverified), 
 
 ## What is still not done
 
-- **Upset cross-section at about 1 MeV is unknown.** Section 7 gives the neutron flux; the rate still spans a factor of 100 until a measured cross-section for the chosen chip at these energies is found. Slow-neutron sensitivity (boron-10 content) is also unknown.
+- **Neutron cross-section known at one energy only.** Section 8 uses a measured value at 1.2 MeV; the rate spans a factor of about 3.3 until σ(E) is folded with the simulated spectrum. Slow-neutron sensitivity (boron-10 content) is also unknown.
+- **Direct-electron arm:** board stacking not simulated, and the chip's tolerance to about 1.7 kGy is unchecked.
 - **CLEAR beam parameters not read.** The 2027 Beams & Detectors document is over 10 MB and did not download in this session. Read it for energy, charge per pulse, repetition rate, and whether own electronics are allowed.
 - **Line-shaped clusters and a geometric size distribution are assumptions.** Real multi-cell upsets depend on the cell layout.
 - **Within-pulse timing is not modelled**, because a CLEAR bunch is far shorter than any readout. "Time clustering" here means pulse-to-pulse.
@@ -168,7 +191,7 @@ Rules from the 2027 invitation: at least five members, every member enrolled in 
 |---|---|---|
 | Sashreek | Lead; decoder and adaptive controller; readout firmware logic | Choose candidate memory devices and settle the bitmap question (item 2) |
 | Prithwijit | Simulation and analysis owner | Take over `burst_sim.py`; add a realistic multi-cell-upset shape model; start the neutron and electron yield estimate |
-| Logan | Radiation physics: secondaries, cross-sections, literature | Produce a flips-per-pulse estimate from published electron and neutron upset cross-sections (confirmed enrolled in high school 2026/27) |
+| Logan | Radiation physics: secondaries, cross-sections, literature | Done: flips-per-pulse estimate ([radiation_estimates.md](radiation_estimates.md)). Next: σ(E) values from Cecchetto Table III, dose tolerance, thermal-neutron sensitivity (confirmed enrolled in high school 2026/27) |
 | Open seat 4 | Hardware build: microcontroller, memory boards, remote logging | Bench prototype that writes a pattern, reads back, logs flips |
 | Open seat 5 | Dosimetry, shielding plan, outreach section | Draft the 200-word outreach activity and run it before March |
 | Coach (needed) | Adult contact for submission; ideally a teacher | Register as contact person |
