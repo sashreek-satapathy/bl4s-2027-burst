@@ -175,7 +175,8 @@ Logan then found the chip's full neutron response in the same paper: measured va
 
 1. **Sharper hypothesis.** "Failures from accumulation are fixed by adaptive scrubbing; failures from bursts are fixed only by interleaving. We measure which kind CLEAR produces." This is testable and has a prediction for each outcome.
 2. **The spatial test carries the experiment, and it no longer depends on a published bitmap.** Section 6 shows clusters can be detected and sized from logical addresses alone. A known bitmap is still better and remains a plus when choosing a device, but it is not a kill criterion.
-3. **Flip target: about 2,000 per configuration** covers clusters down to 2% even with the layout unknown. Convert to beam time once the upset cross-section is estimated. Keep the rate to a few flips per pulse.
+3. **Flip target: about 2,000 per configuration** covers clusters down to 2% even with the layout unknown. With the reference chip that is about 2 chips and one hour of beam per neutron configuration (section 8). Keep the rate to a few flips per pulse.
+6. **Four mechanisms, four configurations:** lead (fast neutrons), polyethylene (thermal neutrons), bare (neutrons plus photons), direct beam (electrons). In the direct arm, log flips against accumulated dose.
 4. **Controls to name explicitly:** per-pulse charge normalisation, shuffled-address control, beam-off run.
 5. **If no upsets are seen:** the 95% upper limit on cross-section per bit is 3.0 / (fluence × number of bits).
 
@@ -183,6 +184,7 @@ Logan then found the chip's full neutron response in the same paper: measured va
 
 - **Thermal neutrons from the room are not simulated.** The Geant4 world is air with no walls. In a real concrete hall, neutrons scattered back from the walls add a thermal background to every configuration, and this chip is as sensitive to thermal neutrons as to fast ones. The 1/v shape of the thermal response is also an assumption.
 - **Geant4 statistics are thin in the polyethylene runs** (158 neutrons counted behind 10 cm, about 8%), and the photonuclear model carries about a factor-2 uncertainty.
+- **Citation needed** for the thermal-neutron cross-section (3.16e-15 cm² per bit), and all cited values should be checked against the papers' tables.
 - **Direct-electron arm:** board stacking not simulated; dose tolerance is from gamma tests, not pulsed electrons.
 - **CLEAR beam parameters not read.** The 2027 Beams & Detectors document is over 10 MB and did not download in this session. Read it for energy, charge per pulse, repetition rate, and whether own electronics are allowed.
 - **Line-shaped clusters and a geometric size distribution are assumptions.** Real multi-cell upsets depend on the cell layout.
