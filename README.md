@@ -26,7 +26,7 @@ Working repo for our entry to CERN's [Beamline for Schools 2027](https://beamlin
 - A spatial test needs a few hundred flips to detect clustering; a time-only test needs thousands to tens of thousands.
 - Clusters can be detected and sized from logical addresses alone, without the chip's physical layout, at a cost of 2 to 4 times more data.
 - Geant4: a 2 cm tungsten converter gives about 0.04 neutrons per 200 MeV electron, at about 1 MeV, evenly in all directions. At 90 degrees, 10 cm of lead removes 99% of the photons and none of the neutrons.
-- With a real 40 nm SRAM and published cross-sections, one 4 MiB chip gets about 0.004 to 0.014 neutron-induced flips per pulse at 30 nC. A few chips and an hour or two of beam give 2,000 flips.
+- With a real 40 nm SRAM and published cross-sections, one 4 MiB chip gets about 0.011 neutron-induced flips per pulse at 30 nC behind lead (0.031 at 30 cm). Two chips and one hour of beam give 2,000 flips. Behind polyethylene, thermal neutrons cause most of the upsets.
 - Adaptive scrubbing cuts failures from accumulated flips by about 40% but does almost nothing against bursts.
 
 ![Decoder result](burst_sim/figures/fig3_decoder.png)
@@ -48,7 +48,7 @@ The beam simulation needs Geant4 (`pip install geant4-pybind`, plus a 2 GB data 
 
 ## Biggest open questions
 
-1. The chip's neutron cross-section below 1.2 MeV. It is measured at 1.2 MeV only, and most simulated neutrons are softer, so the rate is uncertain by a factor of about 3.
+1. Thermal neutrons scattered back from the hall walls. They are not simulated, and the reference chip is about as sensitive to them as to fast neutrons.
 2. Which memory devices to use, and whether their address scrambling is the simple kind our layout-blind method assumes.
 3. CLEAR beam parameters and whether teams may bring their own electronics.
 

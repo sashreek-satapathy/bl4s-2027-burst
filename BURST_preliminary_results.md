@@ -151,21 +151,25 @@ Logan's write-up is in [radiation_estimates.md](radiation_estimates.md). It repl
 
 Assumed beam: 30 nC per pulse for the neutron arm, 0.01 nC per pulse on 1 cm² for the direct arm, 10 Hz.
 
-| | Flips per pulse, one chip | One chip, minutes for 1,000 flips |
-|---|---|---|
-| Neutrons, 50 cm, σ(1.2 MeV) for all neutrons (Logan) | 0.014 | 117 |
-| Neutrons, 50 cm, σ = 0 below 0.5 MeV | 0.0094 | 178 |
-| Neutrons, 50 cm, σ = 0 below 1 MeV | 0.0043 | 389 |
-| Same three, at 30 cm | 0.040 / 0.026 / 0.012 | 42 / 64 / 140 |
-| Direct electrons, 1 cm² | 0.0099 (0.005 to 0.015 at 1σ) | 168 |
+Logan then found the chip's full neutron response in the same paper: measured values at 0.144, 1.2 and 17 MeV, a Weibull fit (saturation 1.40e-14 cm², threshold 0.01 MeV, width 14.05 MeV, shape 0.82), and a thermal-neutron cross-section of (3.16 ± 0.64)e-15 cm² per bit at 3.3 V. `rate_calc.py` folds this curve with the Geant4 spectrum of every configuration. For the thermal part it assumes a 1/v (boron-10-like) energy dependence normalised to the thermal value; that shape is our assumption.
 
-**The spectrum matters.** Behind 10 cm of lead the neutrons average 0.87 MeV; 30% are above 1 MeV and 66% above 0.5 MeV. The cross-section is known here only at 1.2 MeV, so the two "σ = 0 below" rows are bounding cases. The real rate is likely between them and Logan's number until σ(E) from the Cecchetto paper is folded with the spectrum.
+| Configuration, 90°, 50 cm, 30 nC per pulse | Effective σ per bit | Flips per pulse, one chip | Share from the thermal term |
+|---|---|---|---|
+| W 2 cm, bare | 1.67e-15 | 0.0115 | 0% |
+| W 2 cm + 10 cm lead | 1.26e-15 | 0.0112 | 0% |
+| W 2 cm + 5 cm polyethylene | 1.64e-15 | 0.0091 | 55% |
+| W 2 cm + 10 cm polyethylene | 1.93e-15 | 0.0044 | 75% |
+| Direct electrons, 0.01 nC on 1 cm² | 4.74e-18 | 0.0099 (0.005 to 0.015 at 1σ) | |
 
-**Chips against beam time.** For 2,000 flips at 30 cm, the neutron arm needs 2 to 5 chips for one hour of beam, or 1 to 3 chips for two hours. More memory and more beam time trade off directly.
+**The fold lowers Logan's number by only 21%,** from 0.0142 to 0.0112 flips per pulse behind lead. The cross-section rises slowly with energy, so sub-MeV neutrons still upset bits, and the fast tail is worth more than σ(1.2 MeV). The earlier "up to 3.3× lower" bounds were too pessimistic. At 30 cm the rate is 0.031 flips per pulse per chip. The fit undershoots the 17 MeV point by a factor of 2, which does not matter here because under 1% of the neutrons are above 10 MeV.
+
+**Polyethylene does not make the chip safer, as Logan predicted.** Behind 10 cm of polyethylene, 54% of the neutrons are thermal and they cause 75% of the upsets. That makes the polyethylene configuration a test of the boron-10 mechanism, not just a weaker field.
+
+**Chips against beam time.** For 2,000 flips with the folded rate, the neutron arm needs 2 chips for one hour of beam at 30 cm (5 at 50 cm), or 1 chip for two hours at 30 cm. More memory and more beam time trade off directly.
 
 ![chips vs time](burst_sim/figures/fig10_chips_vs_time.png)
 
-**The direct-electron arm is limited by dose, not memory.** Only chips inside the ~1 cm² beam count; adding memory means stacking boards along the beam, not yet simulated. Each pulse gives about 0.017 Gy(Si), so 1,000 flips on one chip costs about 1.7 kGy. The dose per flip is fixed by the cross-section, so lowering the charge only stretches the time. Whether this chip survives that dose needs checking.
+**The direct-electron arm is limited by dose, not memory.** Only chips inside the ~1 cm² beam count; adding memory means stacking boards along the beam, not yet simulated. Each pulse gives about 0.017 Gy(Si), so 1,000 flips on one chip costs about 1.7 kGy. The dose per flip is fixed by the cross-section, so lowering the charge only stretches the time. Logan found that a chip from the same ISSI family stayed functional after 10 kGy of gamma dose, with its supply current roughly doubled (Li et al. 2022), so 1.7 to 3.4 kGy looks survivable. That paper's subject is also a warning: accumulated dose changes upset sensitivity, so the direct-arm cross-section may drift during the run. Logging flips against accumulated dose turns this into a measurement rather than a confound.
 
 ## What this changes in the proposal
 
@@ -177,8 +181,9 @@ Assumed beam: 30 nC per pulse for the neutron arm, 0.01 nC per pulse on 1 cm² f
 
 ## What is still not done
 
-- **Neutron cross-section known at one energy only.** Section 8 uses a measured value at 1.2 MeV; the rate spans a factor of about 3.3 until σ(E) is folded with the simulated spectrum. Slow-neutron sensitivity (boron-10 content) is also unknown.
-- **Direct-electron arm:** board stacking not simulated, and the chip's tolerance to about 1.7 kGy is unchecked.
+- **Thermal neutrons from the room are not simulated.** The Geant4 world is air with no walls. In a real concrete hall, neutrons scattered back from the walls add a thermal background to every configuration, and this chip is as sensitive to thermal neutrons as to fast ones. The 1/v shape of the thermal response is also an assumption.
+- **Geant4 statistics are thin in the polyethylene runs** (158 neutrons counted behind 10 cm, about 8%), and the photonuclear model carries about a factor-2 uncertainty.
+- **Direct-electron arm:** board stacking not simulated; dose tolerance is from gamma tests, not pulsed electrons.
 - **CLEAR beam parameters not read.** The 2027 Beams & Detectors document is over 10 MB and did not download in this session. Read it for energy, charge per pulse, repetition rate, and whether own electronics are allowed.
 - **Line-shaped clusters and a geometric size distribution are assumptions.** Real multi-cell upsets depend on the cell layout.
 - **Within-pulse timing is not modelled**, because a CLEAR bunch is far shorter than any readout. "Time clustering" here means pulse-to-pulse.
@@ -191,7 +196,7 @@ Rules from the 2027 invitation: at least five members, every member enrolled in 
 |---|---|---|
 | Sashreek | Lead; decoder and adaptive controller; readout firmware logic | Choose candidate memory devices and settle the bitmap question (item 2) |
 | Prithwijit | Simulation and analysis owner | Take over `burst_sim.py`; add a realistic multi-cell-upset shape model; start the neutron and electron yield estimate |
-| Logan | Radiation physics: secondaries, cross-sections, literature | Done: flips-per-pulse estimate ([radiation_estimates.md](radiation_estimates.md)). Next: σ(E) values from Cecchetto Table III, dose tolerance, thermal-neutron sensitivity (confirmed enrolled in high school 2026/27) |
+| Logan | Radiation physics: secondaries, cross-sections, literature | Done: flips-per-pulse estimate, σ(E), dose tolerance, thermal sensitivity ([radiation_estimates.md](radiation_estimates.md)) (confirmed enrolled in high school 2026/27) |
 | Open seat 4 | Hardware build: microcontroller, memory boards, remote logging | Bench prototype that writes a pattern, reads back, logs flips |
 | Open seat 5 | Dosimetry, shielding plan, outreach section | Draft the 200-word outreach activity and run it before March |
 | Coach (needed) | Adult contact for submission; ideally a teacher | Register as contact person |
