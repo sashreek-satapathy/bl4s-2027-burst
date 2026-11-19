@@ -1,0 +1,178 @@
+{
+ "note": "Simulated. The analysis sees only pulse, word address, bit number.",
+ "memory_bits": 1048576,
+ "recovery": [
+  {
+   "flips": 2070,
+   "injected_mean_cluster": 1.4913544668587897,
+   "layout_known_mean_cluster": 1.490280777537797,
+   "blind_mean_cluster": 1.464968152866242,
+   "blind_multi_cell_fraction": 0.3319179051663128,
+   "injected_multi_cell_fraction": 0.3472622478386167,
+   "signatures_learned": 47,
+   "min_repeats_required": 4,
+   "shuffled_signatures_learned": 0,
+   "shuffled_blind_mean_cluster": 1.0
+  },
+  {
+   "flips": 10067,
+   "injected_mean_cluster": 1.4973969953889632,
+   "layout_known_mean_cluster": 1.4967291109128753,
+   "blind_mean_cluster": 1.48810051736881,
+   "blind_multi_cell_fraction": 0.32342941611234294,
+   "injected_multi_cell_fraction": 0.3288710397144132,
+   "signatures_learned": 97,
+   "min_repeats_required": 5,
+   "shuffled_signatures_learned": 0,
+   "shuffled_blind_mean_cluster": 1.0
+  },
+  {
+   "flips": 99040,
+   "injected_mean_cluster": 1.4987893462469735,
+   "layout_known_mean_cluster": 1.4978826376285541,
+   "blind_mean_cluster": 1.4986759476431868,
+   "blind_multi_cell_fraction": 0.33337368540516005,
+   "injected_multi_cell_fraction": 0.3337772397094431,
+   "signatures_learned": 211,
+   "min_repeats_required": 8,
+   "shuffled_signatures_learned": 0,
+   "shuffled_blind_mean_cluster": 1.0
+  }
+ ],
+ "power": {
+  "alpha": 0.001,
+  "target_power": 0.95,
+  "budgets": [
+   100,
+   200,
+   500,
+   1000,
+   2000,
+   5000,
+   10000
+  ],
+  "flips_needed_blind": {
+   "1.02": 2000,
+   "1.05": 500,
+   "1.1": 200,
+   "1.2": 200,
+   "1.5": 100
+  },
+  "flips_needed_layout_known": {
+   "1.02": 500,
+   "1.05": 200,
+   "1.1": 100,
+   "1.2": 100,
+   "1.5": 100
+  },
+  "blind_false_positive_rate_at_5pct": 0.032,
+  "curves": {
+   "blind": {
+    "1.02": [
+     0.005,
+     0.055,
+     0.315,
+     0.76,
+     0.995,
+     1.0,
+     1.0
+    ],
+    "1.05": [
+     0.17,
+     0.5,
+     0.975,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "1.1": [
+     0.565,
+     0.965,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "1.2": [
+     0.945,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "1.5": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   "known": {
+    "1.02": [
+     0.525,
+     0.89,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "1.05": [
+     0.905,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "1.1": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "1.2": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "1.5": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0
+    ]
+   }
+  }
+ },
+ "multi_flip_words": {
+  "interleaved": {
+   "flips": 100261,
+   "words_with_2plus_flips": 5,
+   "shuffled_control": 2
+  },
+  "side_by_side": {
+   "flips": 99837,
+   "words_with_2plus_flips": 5157,
+   "shuffled_control": 3
+  }
+ }
+}

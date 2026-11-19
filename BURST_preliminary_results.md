@@ -63,17 +63,122 @@ Beam alternating between 30 and 300 flips per pulse; a controller scrubs faster 
 - Interleaved layout: 38 to 40% fewer uncorrectable words at every scrub budget, for independent and bursty flips alike.
 - Side-by-side layout with bursty flips, 1,200 scrubs: 54,849 fixed against 53,614 adaptive, a 2% gain. Those failures happen inside a single pulse, so no scrub schedule can prevent them.
 
+### 6. Clusters can be found without knowing the chip's layout
+Code: `burst_sim/blind_bitmap.py`. Numbers: `burst_sim/results_blind.json`.
+
+A real memory scrambles logical addresses before they reach a physical row and column, and manufacturers rarely publish the map. We hid the injected clusters behind an unknown scramble and gave the analysis only what the microcontroller would log: pulse number, word address, bit number.
+
+**Method.** For every pair of flips in the same pulse, take the XOR of the two logical addresses. Unrelated pairs spread over about a million possible values. Physical neighbours give the same few values again and again.
+
+![signatures](burst_sim/figures/fig6_blind_signatures.png)
+
+| Flips recorded | Injected mean cluster | Recovered, layout known | Recovered, layout unknown | Shuffled control |
+|---|---|---|---|---|
+| 2,070 | 1.491 | 1.490 | 1.465 | 1.000 |
+| 10,067 | 1.497 | 1.497 | 1.488 | 1.000 |
+| 99,040 | 1.499 | 1.498 | 1.499 | 1.000 |
+
+The shuffled control never learned a single false signature.
+
+![blind power](burst_sim/figures/fig7_blind_power.png)
+
+Flips needed for a 95% chance of detection at a 0.1% false-alarm threshold:
+
+| Mean cluster size | Layout known | Layout unknown |
+|---|---|---|
+| 1.02 | 500 | 2,000 |
+| 1.05 | 200 | 500 |
+| 1.10 | 100 | 200 |
+| 1.20 | 100 | 200 |
+| 1.50 | 100 | 100 |
+
+Not knowing the layout costs a factor of 2 to 4 in data, not a factor of 100. False-alarm rate on independent data at a 5% threshold: 3.2%.
+
+**The decoder question needs no layout at all.** Counting words that hold two or more flips after one pulse uses only logical addresses. In 100,000 bursty flips: 5 such words on an interleaved chip (shuffled control 2), 5,157 on a side-by-side chip (shuffled control 3). So the experiment tells us directly whether a given chip's own layout protects a code against bursts.
+
+**Limits.** The scramble modelled is a permutation and inversion of address bits, which is common but not universal. A chip with an arbitrary lookup-table scramble or spare-row remapping would weaken the method. It also relies on few flips per pulse; at hundreds per pulse the chance pairs swamp the signal.
+
+### 7. What the CLEAR beam produces behind a converter (Geant4)
+Code: `burst_sim/flux_sim.py`. Numbers: `burst_sim/results_flux.json`. Raw histograms: `burst_sim/flux_raw/`.
+
+Geant4 (physics list QGSP_BIC_HP), 200 MeV electrons on a 5 cm diameter tungsten disc, 80,000 beam electrons per setup. Everything is per beam electron at 50 cm from the target, so it scales with bunch charge and with 1/distance². The 200 MeV beam energy is an assumption until the Beams & Detectors document is read. Geant4 photonuclear yields carry roughly a factor-2 model uncertainty.
+
+![flux vs angle](burst_sim/figures/fig8_flux_vs_angle.png)
+
+**Converter thickness.** Neutrons per beam electron: 0.004 (0.35 cm), 0.019 (1 cm), 0.042 (2 cm), 0.053 (5 cm). Most of the gain is reached by 2 cm.
+
+**Where to put the chip.** Neutrons leave almost evenly in all directions; photons and electrons are thrown forward.
+
+| Position (2 cm tungsten, no shield) | Neutrons per cm² | Photons per cm² | Photons per neutron |
+|---|---|---|---|
+| On the beam axis | 1.9e-6 | 1.0e-2 | about 5,400 |
+| At 90 degrees | 1.1e-6 | 7.7e-5 | about 70 |
+
+**What a shield does at 90 degrees.**
+
+| Shield | Neutrons per cm² | Neutrons above 1 MeV | Photons per cm² | Rough dose (Gy per beam electron) |
+|---|---|---|---|---|
+| None | 1.10e-6 | 5.4e-7 | 7.7e-5 | 1.1e-15 |
+| 10 cm lead | 1.41e-6 | 4.9e-7 | 1.0e-6 | 9.6e-18 |
+| 10 cm polyethylene | 3.6e-7 | 3.4e-8 | 1.6e-4 | 7.5e-16 |
+
+- **Lead is a neutron-pass filter.** It cuts photons 74-fold and dose over 100-fold while leaving the neutrons untouched.
+- **Polyethylene converts fast neutrons to slow ones.** It cuts neutrons above 1 MeV 16-fold and creates a thermal peak near 0.05 eV.
+
+![neutron spectrum](burst_sim/figures/fig9_neutron_spectrum.png)
+
+**The neutrons are about 1 MeV, not high-energy.** Mean energy 1.2 MeV with no shield and 0.87 MeV behind 10 cm of lead; under 1% are above 10 MeV. Most published memory upset cross-sections are for neutrons above 10 or 20 MeV, so they do not apply directly. This is the single biggest uncertainty in the rate.
+
+**First rate estimate (cross-sections from memory; superseded by section 8).** Behind 10 cm of lead at 90 degrees and 50 cm: 8,800 neutrons per cm² per nC of beam. For a 16 Mbit memory:
+
+| Assumed upset cross-section per bit at about 1 MeV | Flips per µC of beam, one 16 Mbit chip | Beam charge for 2,000 flips with 16 chips |
+|---|---|---|
+| 1e-16 cm² (pessimistic) | 0.015 | 8,300 µC |
+| 1e-15 cm² | 0.15 | 830 µC |
+| 1e-14 cm² (optimistic) | 1.5 | 83 µC |
+
+If CLEAR delivers on the order of 0.1 µC per second (from memory, unverified), that is 14 minutes to 23 hours. Feasible across most of the range, marginal at the pessimistic end. Moving the chips from 50 cm to 35 cm doubles the rate.
+
+**Flips per pulse will be far below one,** which is exactly the regime where the layout-blind method of section 6 works best.
+
+**Dose is not a problem in the neutron field, and is the limit in the direct beam.** Behind lead the chip receives about 1.5e11 neutrons per cm² for each gray of dose. In the direct beam a chip takes roughly 1.7 Gy per nC per cm², so the direct-beam comparison must run at very low charge and will kill chips; budget several.
+
+**Design consequence.** Three shield states at 90 degrees give three different radiation fields from one geometry: bare (photon-dominated), lead (fast neutrons), polyethylene (slow neutrons plus photons). That separates the mechanisms Logan asked about without moving the chip.
+
+### 8. Upset rate with a real chip and published cross-sections (Logan's estimate)
+
+Logan's write-up is in [radiation_estimates.md](radiation_estimates.md). It replaces the remembered cross-sections in the table above with measured ones for one reference chip, the ISSI IS61WV204816BLL (40 nm SRAM, 4 MiB): 1.61e-15 cm² per bit for 1.2 MeV neutrons and (4.74 ± 2.20)e-18 cm² per bit for 200 MeV electrons. All of Logan's arithmetic reproduces exactly in [burst_sim/rate_calc.py](burst_sim/rate_calc.py).
+
+Assumed beam: 30 nC per pulse for the neutron arm, 0.01 nC per pulse on 1 cm² for the direct arm, 10 Hz.
+
+| | Flips per pulse, one chip | One chip, minutes for 1,000 flips |
+|---|---|---|
+| Neutrons, 50 cm, σ(1.2 MeV) for all neutrons (Logan) | 0.014 | 117 |
+| Neutrons, 50 cm, σ = 0 below 0.5 MeV | 0.0094 | 178 |
+| Neutrons, 50 cm, σ = 0 below 1 MeV | 0.0043 | 389 |
+| Same three, at 30 cm | 0.040 / 0.026 / 0.012 | 42 / 64 / 140 |
+| Direct electrons, 1 cm² | 0.0099 (0.005 to 0.015 at 1σ) | 168 |
+
+**The spectrum matters.** Behind 10 cm of lead the neutrons average 0.87 MeV; 30% are above 1 MeV and 66% above 0.5 MeV. The cross-section is known here only at 1.2 MeV, so the two "σ = 0 below" rows are bounding cases. The real rate is likely between them and Logan's number until σ(E) from the Cecchetto paper is folded with the spectrum.
+
+**Chips against beam time.** For 2,000 flips at 30 cm, the neutron arm needs 2 to 5 chips for one hour of beam, or 1 to 3 chips for two hours. More memory and more beam time trade off directly.
+
+![chips vs time](burst_sim/figures/fig10_chips_vs_time.png)
+
+**The direct-electron arm is limited by dose, not memory.** Only chips inside the ~1 cm² beam count; adding memory means stacking boards along the beam, not yet simulated. Each pulse gives about 0.017 Gy(Si), so 1,000 flips on one chip costs about 1.7 kGy. The dose per flip is fixed by the cross-section, so lowering the charge only stretches the time. Whether this chip survives that dose needs checking.
+
 ## What this changes in the proposal
 
 1. **Sharper hypothesis.** "Failures from accumulation are fixed by adaptive scrubbing; failures from bursts are fixed only by interleaving. We measure which kind CLEAR produces." This is testable and has a prediction for each outcome.
-2. **The spatial test carries the experiment**, and it needs the physical position of each bit. Commercial memories scramble logical addresses. Either pick a device with a published or reverse-engineered bitmap, or the spatial test is not available and the flip target rises from hundreds to tens of thousands. This is now the top feasibility question for device choice.
-3. **Flip target: about 1,000 per configuration** covers clusters down to 2% with margin. Convert to beam time once the upset cross-section is estimated.
+2. **The spatial test carries the experiment, and it no longer depends on a published bitmap.** Section 6 shows clusters can be detected and sized from logical addresses alone. A known bitmap is still better and remains a plus when choosing a device, but it is not a kill criterion.
+3. **Flip target: about 2,000 per configuration** covers clusters down to 2% even with the layout unknown. Convert to beam time once the upset cross-section is estimated. Keep the rate to a few flips per pulse.
 4. **Controls to name explicitly:** per-pulse charge normalisation, shuffled-address control, beam-off run.
 5. **If no upsets are seen:** the 95% upper limit on cross-section per bit is 3.0 / (fluence × number of bits).
 
 ## What is still not done
 
-- **Flip rate at CLEAR is unknown.** The rates used here (5 to 300 flips per pulse) are placeholders. Needs the Geant4 or FLUKA estimate and a literature cross-section.
+- **Neutron cross-section known at one energy only.** Section 8 uses a measured value at 1.2 MeV; the rate spans a factor of about 3.3 until σ(E) is folded with the simulated spectrum. Slow-neutron sensitivity (boron-10 content) is also unknown.
+- **Direct-electron arm:** board stacking not simulated, and the chip's tolerance to about 1.7 kGy is unchecked.
 - **CLEAR beam parameters not read.** The 2027 Beams & Detectors document is over 10 MB and did not download in this session. Read it for energy, charge per pulse, repetition rate, and whether own electronics are allowed.
 - **Line-shaped clusters and a geometric size distribution are assumptions.** Real multi-cell upsets depend on the cell layout.
 - **Within-pulse timing is not modelled**, because a CLEAR bunch is far shorter than any readout. "Time clustering" here means pulse-to-pulse.
@@ -86,7 +191,7 @@ Rules from the 2027 invitation: at least five members, every member enrolled in 
 |---|---|---|
 | Sashreek | Lead; decoder and adaptive controller; readout firmware logic | Choose candidate memory devices and settle the bitmap question (item 2) |
 | Prithwijit | Simulation and analysis owner | Take over `burst_sim.py`; add a realistic multi-cell-upset shape model; start the neutron and electron yield estimate |
-| Logan | Radiation physics: secondaries, cross-sections, literature | Produce a flips-per-pulse estimate from published electron and neutron upset cross-sections (confirmed enrolled in high school 2026/27) |
+| Logan | Radiation physics: secondaries, cross-sections, literature | Done: flips-per-pulse estimate ([radiation_estimates.md](radiation_estimates.md)). Next: σ(E) values from Cecchetto Table III, dose tolerance, thermal-neutron sensitivity (confirmed enrolled in high school 2026/27) |
 | Open seat 4 | Hardware build: microcontroller, memory boards, remote logging | Bench prototype that writes a pattern, reads back, logs flips |
 | Open seat 5 | Dosimetry, shielding plan, outreach section | Draft the 200-word outreach activity and run it before March |
 | Coach (needed) | Adult contact for submission; ideally a teacher | Register as contact person |

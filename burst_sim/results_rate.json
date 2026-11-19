@@ -1,0 +1,155 @@
+{
+ "note": "Built on Logan's estimate. Geant4 flux, published cross-sections, assumed beam settings. Expectations, not measurements.",
+ "logan_check": {
+  "neutron_fluence_per_electron": 1.4068839703843578e-06,
+  "neutrons_counted_in_geant4": 614,
+  "geant4_stat_error": 0.04035671561356309,
+  "neutron_fluence_per_pulse": 263432.3720360207,
+  "neutron_upsets_per_pulse_per_chip": 0.014231311018670985,
+  "neutron_MiB_for_1000_in_6000_pulses": 46.845063381161665,
+  "electron_upsets_per_pulse_per_chip": 0.00992699583209625,
+  "electron_MiB_for_1000_in_6000_pulses": 67.15694032137907
+ },
+ "neutron_spectrum_behind_10cm_lead": {
+  "mean_energy_MeV": 0.8748911263798076,
+  "fraction": {
+   "above_0.1_MeV": 0.9677937962274316,
+   "above_0.5_MeV": 0.657882936537474,
+   "above_1.0_MeV": 0.30124074933536255
+  }
+ },
+ "neutron_models": {
+  "flat (Logan), 50 cm": {
+   "upsets_per_pulse_per_chip": 0.014231311018670985,
+   "minutes_one_chip_for_1000": 117.11265845290417,
+   "chips_needed": {
+    "1000": {
+     "10": 12,
+     "30": 4,
+     "60": 2,
+     "120": 1,
+     "240": 1
+    },
+    "2000": {
+     "10": 24,
+     "30": 8,
+     "60": 4,
+     "120": 2,
+     "240": 1
+    }
+   }
+  },
+  "flat (Logan), 30 cm": {
+   "upsets_per_pulse_per_chip": 0.0395314194963083,
+   "minutes_one_chip_for_1000": 42.16055704304549,
+   "chips_needed": {
+    "1000": {
+     "10": 5,
+     "30": 2,
+     "60": 1,
+     "120": 1,
+     "240": 1
+    },
+    "2000": {
+     "10": 9,
+     "30": 3,
+     "60": 2,
+     "120": 1,
+     "240": 1
+    }
+   }
+  },
+  "zero below 0.5 MeV, 50 cm": {
+   "upsets_per_pulse_per_chip": 0.009362536683741377,
+   "minutes_one_chip_for_1000": 178.01443379772664,
+   "chips_needed": {
+    "1000": {
+     "10": 18,
+     "30": 6,
+     "60": 3,
+     "120": 2,
+     "240": 1
+    },
+    "2000": {
+     "10": 36,
+     "30": 12,
+     "60": 6,
+     "120": 3,
+     "240": 2
+    }
+   }
+  },
+  "zero below 0.5 MeV, 30 cm": {
+   "upsets_per_pulse_per_chip": 0.02600704634372605,
+   "minutes_one_chip_for_1000": 64.08519616718159,
+   "chips_needed": {
+    "1000": {
+     "10": 7,
+     "30": 3,
+     "60": 2,
+     "120": 1,
+     "240": 1
+    },
+    "2000": {
+     "10": 13,
+     "30": 5,
+     "60": 3,
+     "120": 2,
+     "240": 1
+    }
+   }
+  },
+  "zero below 1 MeV, 50 cm": {
+   "upsets_per_pulse_per_chip": 0.004287050795289049,
+   "minutes_one_chip_for_1000": 388.7676508284278,
+   "chips_needed": {
+    "1000": {
+     "10": 39,
+     "30": 13,
+     "60": 7,
+     "120": 4,
+     "240": 2
+    },
+    "2000": {
+     "10": 78,
+     "30": 26,
+     "60": 13,
+     "120": 7,
+     "240": 4
+    }
+   }
+  },
+  "zero below 1 MeV, 30 cm": {
+   "upsets_per_pulse_per_chip": 0.01190847443135847,
+   "minutes_one_chip_for_1000": 139.956354298234,
+   "chips_needed": {
+    "1000": {
+     "10": 14,
+     "30": 5,
+     "60": 3,
+     "120": 2,
+     "240": 1
+    },
+    "2000": {
+     "10": 28,
+     "30": 10,
+     "60": 5,
+     "120": 3,
+     "240": 2
+    }
+   }
+  }
+ },
+ "direct_electron": {
+  "upsets_per_pulse_per_chip": 0.00992699583209625,
+  "upsets_per_pulse_range_1sigma": [
+   0.005319529412135967,
+   0.014534462252056537
+  ],
+  "dose_Gy_per_pulse": 0.01699812581338644,
+  "dose_Gy_per_6000_pulses": 101.98875488031865,
+  "dose_Gy_for_1000_flips_one_chip": 1712.3131812373294,
+  "minutes_one_chip_for_1000": 167.89235080344767,
+  "note": "Only chips inside the ~1 cm2 beam count. Adding memory means stacking boards along the beam; not simulated. Dose per flip is fixed by sigma, not by charge."
+ }
+}
