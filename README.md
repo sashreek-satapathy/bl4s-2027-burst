@@ -27,7 +27,8 @@ Working repo for our entry to CERN's [Beamline for Schools 2027](https://beamlin
 - Clusters can be detected and sized from logical addresses alone, without the chip's physical layout, at a cost of 2 to 4 times more data.
 - Geant4: a 2 cm tungsten converter gives about 0.04 neutrons per 200 MeV electron, at about 1 MeV, evenly in all directions. At 90 degrees, 10 cm of lead removes 99% of the photons and none of the neutrons.
 - With a real 40 nm SRAM and published cross-sections, one 4 MiB chip gets about 0.011 neutron-induced flips per pulse at 30 nC behind lead (0.031 at 30 cm). Two chips and one hour of beam give 2,000 flips. Behind polyethylene, thermal neutrons cause most of the upsets.
-- Adaptive scrubbing cuts failures from accumulated flips by about 40% but does almost nothing against bursts.
+- On the real chip at CLEAR rates, accumulated flips never break the code; only bursts do. Learning which address bits to spread a codeword over from the chip's first 1,000 flips brings burst failures down to chance level, without the layout.
+- Adaptive scrubbing cuts failures from accumulated flips by about 40% but does almost nothing against bursts, and at CLEAR rates there is no accumulation for it to fix.
 
 ![Decoder result](burst_sim/figures/fig3_decoder.png)
 
@@ -40,6 +41,7 @@ python3 -m venv .venv
 .venv/bin/python burst_sim.py
 .venv/bin/python blind_bitmap.py
 .venv/bin/python rate_calc.py      # uses the committed Geant4 output in flux_raw/
+.venv/bin/python decoder_chip.py   # about 10 seconds
 ```
 
 These two take under 30 seconds together and rewrite `figures/` and the results JSON files. The random seed is fixed, so results reproduce exactly.

@@ -170,5 +170,6 @@ All arithmetic above was reproduced independently by `burst_sim/rate_calc.py`. O
 
 5. **Fold done.** `rate_calc.py` folds the Weibull fit plus the thermal value (assumed 1/v shape) with each Geant4 spectrum. Behind 10 cm of lead the rate is 0.0112 flips per pulse per chip at 50 cm, 21% below the 1.2 MeV estimate, not up to 3.3× lower. See section 8 of `BURST_preliminary_results.md`.
 6. **Thermal term confirmed important.** Behind 10 cm of polyethylene, 75% of the upsets come from the thermal term.
-7. **Source needed for σ_thermal.** Section 5 gives the value without a reference; add one before it goes into the proposal.
+7. **Source for σ_thermal found:** Coronetti et al. 2020 ([3] above), Table II: ILL thermal neutrons, 3.3 V, (3.16 ± 0.64) × 10⁻¹⁵ cm²/bit. The same table also confirms the 200 MeV electron value and gives 2.20 × 10⁻¹⁵ at 2.5 MeV and 9.81 × 10⁻¹⁵ at 14.8 MeV (neutrons, ENEA). The Weibull fit gives 3.0 × 10⁻¹⁵ at 2.5 MeV, about 35% above that point, so the folded rate may be slightly high.
 8. **Small correction:** the fraction above 1 MeV behind lead is about 30% once the bin straddling 1 MeV is split properly (35% was a coarser count).
+9. **Direct-beam charge:** the same paper says VESPER's laser gun could go only as low as 30 pC per pulse, and that the flux was kept at the low end to avoid beam artefacts such as localised SEFIs. Logan's 0.01 nC (10 pC) per pulse may be below what CLEAR can deliver; with a 0.5–3 cm spot the fluence per pulse changes too. Worth asking CLEAR.
