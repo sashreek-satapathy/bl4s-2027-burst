@@ -195,6 +195,33 @@ Logan then found the chip's full neutron response in the same paper: measured va
 
 **Assumptions.** Address scrambling is a bit permutation plus inversion; real chips can scramble less simply. Cluster shapes are line-shaped with geometric sizes. The 10-pulse readout interval assumes the microcontroller can read 4 MiB in about a second.
 
+## 10. Validation against CERN's measurement in the same chip
+
+CERN's R2E group measured upsets in our exact chip (ISSI IS61WV204816BLL-10TLI) at CLEAR: 205 MeV electrons on a 15 cm aluminium target, chips 10 cm from the beam axis, three setups (Lerner et al. 2023, IEEE TNS 70(8) 1572; notes in [R2E_papers_notes.md](R2E_papers_notes.md)). [burst_sim/validate_l23.py](burst_sim/validate_l23.py) rebuilds that setup in Geant4 with the same physics list as our flux simulation, folds the neutron spectrum with the same σ(E) we use for BURST, and compares with their measured rates.
+
+![validation](burst_sim/figures/fig12_validation_l23.png)
+
+| Run | Chip position | Ours (SEU/h) | CERN measured | CERN FLUKA | Ours / measured |
+|---|---|---|---|---|---|
+| 1 (5 cm radius) | lateral | 3,690 | 3,000 | 2,350 | 1.23 |
+| 1 | top | 3,750 | 3,150 | 2,400 | 1.19 |
+| 2 (2.5 cm radius) | lateral | 4,000 | 4,300 | 2,550 | 0.93 |
+| 2 | top | 3,970 | 3,850 | 2,600 | 1.03 |
+| 3 (+ 5 cm lead) | lateral, behind lead | 1,920 | 2,600 | 2,150 | 0.74 |
+| 3 | top | 3,390 | 4,100 | 2,950 | 0.83 |
+
+4 million electrons per run; statistical error about 2%. CERN's values are read by eye from their Fig. 8 (about ±100 SEU/h).
+
+**Our model reproduces CERN's measurements within 26% at every position**, closer than the "below 40%" CERN reports for their own FLUKA predictions. Geant4 and σ(E) together, the two pieces our 30 cm estimate (section 8) rests on, are therefore checked against real data in this chip at this facility.
+
+Limits of the check:
+- **Chip position along the target is not given in the paper.** We average over the target length (z = 0 to 15 cm); the bars in the figure show the full spread from one end to the other (about ±25%). This is the largest uncertainty in the comparison.
+- **Run 3 lead geometry is our guess** (5 cm slab at 4–9 cm from the axis). It is the worst agreement (0.74), so the lead attenuation may be slightly overestimated.
+- **No hall in the simulation.** CERN also neglected thermal neutrons here; the room's contribution is still open for our own configurations.
+- **Aluminium, not tungsten.** The check covers the physics chain (photonuclear neutrons, transport, the σ(E) fold), not our converter specifically.
+
+Technical note: fluence is scored as track length per volume in a thin shell. Simple surface crossings give values about 10% lower at this distance, as expected for neutrons crossing at an angle.
+
 ## What this changes in the proposal
 
 1. **Sharper hypothesis.** "At beam-test rates, every error-correction failure comes from a burst, and a codeword layout learned from the chip's own first flips removes them without knowing its internal layout." Adaptive scrubbing drops out: section 9 shows accumulated flips cannot break the code at CLEAR rates.
@@ -207,6 +234,7 @@ Logan then found the chip's full neutron response in the same paper: measured va
 ## What is still not done
 
 - **Thermal neutrons from the room are not simulated.** The Geant4 world is air with no walls. In a real concrete hall, neutrons scattered back from the walls add a thermal background to every configuration, and this chip is as sensitive to thermal neutrons as to fast ones. The 1/v shape of the thermal response is also an assumption.
+- **Model checked against CERN data (section 10):** within 26% in the same chip at CLEAR. Thermal background from the room is still unsimulated.
 - **Geant4 statistics are thin in the polyethylene runs** (158 neutrons counted behind 10 cm, about 8%), and the photonuclear model carries about a factor-2 uncertainty.
 - **Cited values still to be checked against the papers.** The thermal value (3.16e-15 cm² per bit) and the 200 MeV electron value are confirmed in Coronetti et al. 2020, Table II; the Cecchetto values are not yet checked.
 - **Readout speed:** reading 2 × 4 MiB every second needs checking on the actual microcontroller.
