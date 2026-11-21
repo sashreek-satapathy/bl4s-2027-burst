@@ -11,14 +11,16 @@ What already exists for you to build against:
 
 ## 1. Choose the microcontroller and design the memory board
 
-**Goal:** read 2 chips × 2M words × 16 bits in about 1 second.
+**Goal:** read 2 chips × 2M words × 16 bits in a few seconds over a 20 m cable.
 
 - The ISSI IS61WV204816BLL is a parallel asynchronous SRAM: 21 address lines, 16 data lines, plus chip-enable, output-enable and write-enable (and byte enables). That is about 40 signals per chip. Shared address/data bus, separate chip-enables.
 - Look for a microcontroller with a hardware external-memory controller (STM32's "FMC/FSMC" handles asynchronous SRAM directly; check which boards expose all the pins). The alternative is driving the bus from GPIO, which is slower and needs more pins.
 - Check the chip's package and pinout in the datasheet. You will need an adapter or a small custom board.
 - Plan the physical layout: only the memory board sits in the radiation field. The microcontroller stays outside it, behind shielding or several metres away, because it can upset too. Long cables slow the bus; measure, don't guess.
+- **CERN answer (20 Nov 2026):** the readout electronics sit about **20 m** away, outside the radiation area. A bare 40-signal parallel bus will not work over 20 m. Put line drivers (differential, e.g. LVDS, or buffered single-ended over twisted pair) on the memory board and matching receivers at the Nucleo. Expect roughly 0.5-1 us per word, so a 2-4 s sweep of both chips. Ask whether a shielded box 2-3 m from the beam is allowed instead.
+- Irradiated boards are declared radioactive and may not come back. Make the memory board cheap and build at least 3.
 
-**Done when:** you have a chosen board, a wiring diagram, and a calculation of read time per chip from the datasheet timings.
+**Done when:** you have a chosen board, a pin map (chip pin → buffer → cable pair → Nucleo pin), a wiring diagram, and a read time per chip from the datasheet timings plus 20 m of cable.
 
 ## 2. Firmware: write, read back, log, rewrite
 

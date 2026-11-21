@@ -86,6 +86,8 @@ def main():
             r = np.concatenate([r, np.full(400, rng.integers(ROWS))])
             col = np.concatenate([col, rng.choice(COLS, 400, replace=False)])
             p = np.concatenate([p, np.full(400, sp)])
+        inside = p < n_read * READOUT_EVERY          # drop pulses after the last full readout
+        p, r, col = p[inside], r[inside], col[inside]
         addr, bit = chip.to_logical(r, col)
         ro = p // READOUT_EVERY
         for rd, ad, b in zip(ro, addr, bit):

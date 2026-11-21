@@ -247,6 +247,11 @@ def analyse(run_dir):
     rep = {"run": run["run"], "configuration": run["configuration"]}
 
     # ---- 1. quality ----
+    orphan = ~np.isin(F["readout"] * 1000 + F["chip"], R["readout"] * 1000 + R["chip"])
+    n_orphan = int(orphan.sum())          # flips naming a readout missing from readouts.csv
+    if n_orphan:
+        print(f"WARNING: {n_orphan} flips belong to readouts missing from readouts.csv; ignored")
+        F = select(F, ~orphan)
     bad, sefi, n_all = quality(run, R, F)
     rkey = R["readout"] * 1000 + R["chip"]
     fkey = F["readout"] * 1000 + F["chip"]
@@ -257,7 +262,8 @@ def analyse(run_dir):
         sefi_like=int(sefi.sum()),
         sefi_list=[dict(readout=int(r), chip=int(c), flips=int(k)) for r, c, k in
                    zip(R["readout"][sefi], R["chip"][sefi], n_all[sefi])],
-        flips_total=int(F["addr"].size), flips_excluded=int((~keep).sum()))
+        flips_total=int(F["addr"].size) + n_orphan, flips_excluded=int((~keep).sum()),
+        flips_without_readout=n_orphan)
     F = select(F, keep)
     good = ~bad & ~sefi
     R = {k: v[good] for k, v in R.items()}
@@ -397,7 +403,8 @@ def write_markdown(rep, out_dir):
          f"- {q['readouts']} readouts; {q['incomplete_or_failed']} incomplete or failed, dropped.",
          f"- {q['sefi_like']} SEFI-like readouts dropped: " +
          (", ".join(f"readout {x['readout']} chip {x['chip']} ({x['flips']} flips)" for x in q["sefi_list"]) or "none") + ".",
-         f"- {q['flips_total']} flipped bits logged, {q['flips_excluded']} excluded with those readouts.",
+         f"- {q['flips_total']} flipped bits logged, {q['flips_excluded']} excluded with those readouts" +
+         (f"; {q['flips_without_readout']} more name a readout missing from readouts.csv (logging bug?)." if q["flips_without_readout"] else "."),
          "", "## Upset cross-section", "", "| Chip | Flips | Charge (nC) | σ per bit (cm²) | 95% range |", "|---|---|---|---|---|"]
     for c, r in rep["rate"].items():
         if not r["sigma_95"]:
