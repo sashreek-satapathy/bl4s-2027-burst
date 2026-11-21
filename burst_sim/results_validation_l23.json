@@ -1,0 +1,122 @@
+{
+ "note": "Geant4 rebuild of Lerner et al. 2023 (CERN, Al target), folded with the ISSI Weibull + thermal cross-section. SEU/h per chip at 30 nC, 10 Hz.",
+ "assumptions": {
+  "lead_slab_cm": {
+   "x0": 4.0,
+   "x1": 9.0,
+   "half_y": 10.0,
+   "z0": -5.0,
+   "z1": 20.0
+  },
+  "sram_z_range_cm": [
+   0,
+   15.0
+  ],
+  "no_hall_or_concrete": true,
+  "beam_MeV": 205.0
+ },
+ "runs": {
+  "1": {
+   "events": 4000000,
+   "seeds": 8,
+   "lateral (ISSI1)": {
+    "ours_seu_per_h": 3694.4081422864115,
+    "ours_stat_err": 62.83890075544385,
+    "ours_range_over_z": [
+     2677.3043961800668,
+     4444.465496882369
+    ],
+    "ours_using_crossings": 3354.5123888084086,
+    "neutron_fluence_per_e_cm2": 5.5655079872146955e-06,
+    "fraction_above_1MeV": 0.8027249796214011,
+    "cern_measured_seu_per_h": 3000.0,
+    "cern_fluka_seu_per_h": 2350.0,
+    "ours_over_measured": 1.231469380762137,
+    "ours_over_fluka": 1.572088571185707
+   },
+   "top (ISSI2)": {
+    "ours_seu_per_h": 3750.3630764751747,
+    "ours_stat_err": 64.150005152979,
+    "ours_range_over_z": [
+     2779.485860214578,
+     4415.3474588036825
+    ],
+    "ours_using_crossings": 3400.9419603054066,
+    "neutron_fluence_per_e_cm2": 5.599921388852611e-06,
+    "fraction_above_1MeV": 0.8120970412927156,
+    "cern_measured_seu_per_h": 3150.0,
+    "cern_fluka_seu_per_h": 2400.0,
+    "ours_over_measured": 1.1905914528492618,
+    "ours_over_fluka": 1.562651281864656
+   }
+  },
+  "2": {
+   "events": 4000000,
+   "seeds": 8,
+   "lateral (ISSI1)": {
+    "ours_seu_per_h": 3996.4765767202457,
+    "ours_stat_err": 62.96540850972931,
+    "ours_range_over_z": [
+     3034.4108326611017,
+     4601.727336559867
+    ],
+    "ours_using_crossings": 3665.805270919275,
+    "neutron_fluence_per_e_cm2": 5.535185518787009e-06,
+    "fraction_above_1MeV": 0.8352680145801903,
+    "cern_measured_seu_per_h": 4300.0,
+    "cern_fluka_seu_per_h": 2550.0,
+    "ours_over_measured": 0.9294131573768013,
+    "ours_over_fluka": 1.5672457163608806
+   },
+   "top (ISSI2)": {
+    "ours_seu_per_h": 3973.024115550357,
+    "ours_stat_err": 63.20969618913485,
+    "ours_range_over_z": [
+     2939.0530814010367,
+     4460.714318317087
+    ],
+    "ours_using_crossings": 3646.096942674674,
+    "neutron_fluence_per_e_cm2": 5.506126198780122e-06,
+    "fraction_above_1MeV": 0.8472935068689139,
+    "cern_measured_seu_per_h": 3850.0,
+    "cern_fluka_seu_per_h": 2600.0,
+    "ours_over_measured": 1.0319543157273654,
+    "ours_over_fluka": 1.5280861982885987
+   }
+  },
+  "3": {
+   "events": 4000000,
+   "seeds": 8,
+   "lateral (ISSI1)": {
+    "ours_seu_per_h": 1917.955394990271,
+    "ours_stat_err": 56.5712118932768,
+    "ours_range_over_z": [
+     1407.261803661563,
+     2358.65553890906
+    ],
+    "ours_using_crossings": 1566.1103617754316,
+    "neutron_fluence_per_e_cm2": 3.2507022613054868e-06,
+    "fraction_above_1MeV": 0.737472058386092,
+    "cern_measured_seu_per_h": 2600.0,
+    "cern_fluka_seu_per_h": 2150.0,
+    "ours_over_measured": 0.7376751519193351,
+    "ours_over_fluka": 0.8920722767396609
+   },
+   "top (ISSI2)": {
+    "ours_seu_per_h": 3393.6287610213735,
+    "ours_stat_err": 61.743632927863224,
+    "ours_range_over_z": [
+     2636.064007281834,
+     3994.898173060471
+    ],
+    "ours_using_crossings": 3023.0691371402622,
+    "neutron_fluence_per_e_cm2": 5.02099284441013e-06,
+    "fraction_above_1MeV": 0.808917411690178,
+    "cern_measured_seu_per_h": 4100.0,
+    "cern_fluka_seu_per_h": 2950.0,
+    "ours_over_measured": 0.8277143319564325,
+    "ours_over_fluka": 1.150382630854703
+   }
+  }
+ }
+}

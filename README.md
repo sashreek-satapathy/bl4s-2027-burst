@@ -6,6 +6,10 @@ Working repo for our entry to CERN's [Beamline for Schools 2027](https://beamlin
 
 **Status.** Proposal in preparation. Deadline: 12 March 2027, 23:59 CET. No beam data exists yet; everything numerical here is simulation.
 
+## Project tracker
+
+Everything left until submission, with due dates and a live progress meter: see the pinned **BURST tracker** issue in this repo's Issues tab. Nobody is assigned; pick an open task, say so in the team chat, tick it when done.
+
 ## Start here
 
 | File | What it is |
@@ -28,6 +32,8 @@ Working repo for our entry to CERN's [Beamline for Schools 2027](https://beamlin
 - Geant4: a 2 cm tungsten converter gives about 0.04 neutrons per 200 MeV electron, at about 1 MeV, evenly in all directions. At 90 degrees, 10 cm of lead removes 99% of the photons and none of the neutrons.
 - With a real 40 nm SRAM and published cross-sections, one 4 MiB chip gets about 0.011 neutron-induced flips per pulse at 30 nC behind lead (0.031 at 30 cm). Two chips and one hour of beam give 2,000 flips. Behind polyethylene, thermal neutrons cause most of the upsets.
 - On the real chip at CLEAR rates, accumulated flips never break the code; only bursts do. Learning which address bits to spread a codeword over from the chip's first 1,000 flips brings burst failures down to chance level, without the layout.
+- **Validated against CERN data:** our Geant4 + cross-section chain reproduces CERN's measured upset rates in the same chip at CLEAR (Lerner et al. 2023, aluminium target) within 26% at all six positions (`burst_sim/validate_l23.py`, section 10 of the results).
+- The readout can be slow: sweeps of 8 s or even 46 s give the same analysis results as 1 s, so the memory board can sit 20 m away on a simple serial link (`hardware/OPTION_B.md`).
 - Adaptive scrubbing cuts failures from accumulated flips by about 40% but does almost nothing against bursts, and at CLEAR rates there is no accumulation for it to fix.
 
 ![Decoder result](burst_sim/figures/fig3_decoder.png)
@@ -45,6 +51,8 @@ python3 -m venv .venv
 ```
 
 These two take under 30 seconds together and rewrite `figures/` and the results JSON files. The random seed is fixed, so results reproduce exactly.
+
+CERN validation: `.venv/bin/python validate_l23.py all --events 500000 --seeds 8` (about 30 minutes on a 10-core laptop), then `validate_l23.py report`.
 
 The beam simulation needs Geant4 (`pip install geant4-pybind`, plus a 2 GB data download on first use): `.venv/bin/python flux_sim.py all --events 10000`, about 10 minutes on a laptop.
 
