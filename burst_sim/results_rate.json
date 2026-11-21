@@ -18,8 +18,88 @@
    "above_1.0_MeV": 0.30124074933536255
   }
  },
+ "sigma_fit_check": {
+  "0.144": {
+   "fit": 3.0645329340469244e-16,
+   "measured": 3.68e-16
+  },
+  "1.2": {
+   "fit": 1.7327292798188842e-15,
+   "measured": 1.61e-15
+  },
+  "17.0": {
+   "fit": 9.64887506268116e-15,
+   "measured": 1.91e-14
+  }
+ },
+ "folded": {
+  "W 0.35 cm (1 X0)": {
+   "neutrons_counted": 40,
+   "neutron_per_cm2_per_electron": 9.165367885240116e-08,
+   "thermal_fraction_below_0p5eV": 0.0,
+   "effective_sigma_cm2_per_bit": 2.0653561150590218e-15,
+   "upsets_per_pulse_per_chip_50cm": 0.0011893388325295469,
+   "fraction_from_thermal_term": 0.0002716157789063896
+  },
+  "W 1 cm": {
+   "neutrons_counted": 207,
+   "neutron_per_cm2_per_electron": 4.7430778806117594e-07,
+   "thermal_fraction_below_0p5eV": 0.0,
+   "effective_sigma_cm2_per_bit": 1.7062511215909952e-15,
+   "upsets_per_pulse_per_chip_50cm": 0.0050846838875258,
+   "fraction_from_thermal_term": 0.00033654344520647723
+  },
+  "W 2 cm": {
+   "neutrons_counted": 478,
+   "neutron_per_cm2_per_electron": 1.0952614622861939e-06,
+   "thermal_fraction_below_0p5eV": 0.0,
+   "effective_sigma_cm2_per_bit": 1.6696440563254146e-15,
+   "upsets_per_pulse_per_chip_50cm": 0.011489535075149477,
+   "fraction_from_thermal_term": 0.0003552151874463946
+  },
+  "W 5 cm": {
+   "neutrons_counted": 760,
+   "neutron_per_cm2_per_electron": 1.741419898195622e-06,
+   "thermal_fraction_below_0p5eV": 0.0,
+   "effective_sigma_cm2_per_bit": 1.430379647984732e-15,
+   "upsets_per_pulse_per_chip_50cm": 0.01565004452059437,
+   "fraction_from_thermal_term": 0.00046022449744617097
+  },
+  "W 2 cm + 5 cm lead": {
+   "neutrons_counted": 598,
+   "neutron_per_cm2_per_electron": 1.3702224988433972e-06,
+   "thermal_fraction_below_0p5eV": 0.0,
+   "effective_sigma_cm2_per_bit": 1.4685868004867144e-15,
+   "upsets_per_pulse_per_chip_50cm": 0.012643038701877034,
+   "fraction_from_thermal_term": 0.00044102472046521
+  },
+  "W 2 cm + 10 cm lead": {
+   "neutrons_counted": 614,
+   "neutron_per_cm2_per_electron": 1.4068839703843578e-06,
+   "thermal_fraction_below_0p5eV": 0.0,
+   "effective_sigma_cm2_per_bit": 1.2635381805994763e-15,
+   "upsets_per_pulse_per_chip_50cm": 0.011168822877066345,
+   "fraction_from_thermal_term": 0.0005568138595857561
+  },
+  "W 2 cm + 5 cm polyethylene": {
+   "neutrons_counted": 386,
+   "neutron_per_cm2_per_electron": 8.844580009256711e-07,
+   "thermal_fraction_below_0p5eV": 0.34455958549222804,
+   "effective_sigma_cm2_per_bit": 1.6351907084109012e-15,
+   "upsets_per_pulse_per_chip_50cm": 0.009086703939999673,
+   "fraction_from_thermal_term": 0.5452753981398343
+  },
+  "W 2 cm + 10 cm polyethylene": {
+   "neutrons_counted": 158,
+   "neutron_per_cm2_per_electron": 3.6203203146698454e-07,
+   "thermal_fraction_below_0p5eV": 0.5379746835443039,
+   "effective_sigma_cm2_per_bit": 1.9291752269632302e-15,
+   "upsets_per_pulse_per_chip_50cm": 0.004388129403949024,
+   "fraction_from_thermal_term": 0.7549596933364208
+  }
+ },
  "neutron_models": {
-  "flat (Logan), 50 cm": {
+  "flat 1.2 MeV value (Logan), 50 cm": {
    "upsets_per_pulse_per_chip": 0.014231311018670985,
    "minutes_one_chip_for_1000": 117.11265845290417,
    "chips_needed": {
@@ -39,7 +119,7 @@
     }
    }
   },
-  "flat (Logan), 30 cm": {
+  "flat 1.2 MeV value (Logan), 30 cm": {
    "upsets_per_pulse_per_chip": 0.0395314194963083,
    "minutes_one_chip_for_1000": 42.16055704304549,
    "chips_needed": {
@@ -59,83 +139,43 @@
     }
    }
   },
-  "zero below 0.5 MeV, 50 cm": {
-   "upsets_per_pulse_per_chip": 0.009362536683741377,
-   "minutes_one_chip_for_1000": 178.01443379772664,
+  "folded over spectrum, 50 cm": {
+   "upsets_per_pulse_per_chip": 0.011168822877066345,
+   "minutes_one_chip_for_1000": 149.22491698645698,
    "chips_needed": {
     "1000": {
-     "10": 18,
-     "30": 6,
-     "60": 3,
-     "120": 2,
-     "240": 1
-    },
-    "2000": {
-     "10": 36,
-     "30": 12,
-     "60": 6,
-     "120": 3,
-     "240": 2
-    }
-   }
-  },
-  "zero below 0.5 MeV, 30 cm": {
-   "upsets_per_pulse_per_chip": 0.02600704634372605,
-   "minutes_one_chip_for_1000": 64.08519616718159,
-   "chips_needed": {
-    "1000": {
-     "10": 7,
-     "30": 3,
-     "60": 2,
-     "120": 1,
-     "240": 1
-    },
-    "2000": {
-     "10": 13,
-     "30": 5,
-     "60": 3,
-     "120": 2,
-     "240": 1
-    }
-   }
-  },
-  "zero below 1 MeV, 50 cm": {
-   "upsets_per_pulse_per_chip": 0.004287050795289049,
-   "minutes_one_chip_for_1000": 388.7676508284278,
-   "chips_needed": {
-    "1000": {
-     "10": 39,
-     "30": 13,
-     "60": 7,
-     "120": 4,
-     "240": 2
-    },
-    "2000": {
-     "10": 78,
-     "30": 26,
-     "60": 13,
-     "120": 7,
-     "240": 4
-    }
-   }
-  },
-  "zero below 1 MeV, 30 cm": {
-   "upsets_per_pulse_per_chip": 0.01190847443135847,
-   "minutes_one_chip_for_1000": 139.956354298234,
-   "chips_needed": {
-    "1000": {
-     "10": 14,
+     "10": 15,
      "30": 5,
      "60": 3,
      "120": 2,
      "240": 1
     },
     "2000": {
-     "10": 28,
+     "10": 30,
      "30": 10,
      "60": 5,
      "120": 3,
      "240": 2
+    }
+   }
+  },
+  "folded over spectrum, 30 cm": {
+   "upsets_per_pulse_per_chip": 0.031024507991850962,
+   "minutes_one_chip_for_1000": 53.720970115124494,
+   "chips_needed": {
+    "1000": {
+     "10": 6,
+     "30": 2,
+     "60": 1,
+     "120": 1,
+     "240": 1
+    },
+    "2000": {
+     "10": 11,
+     "30": 4,
+     "60": 2,
+     "120": 1,
+     "240": 1
     }
    }
   }

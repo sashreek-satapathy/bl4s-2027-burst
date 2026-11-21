@@ -1,6 +1,6 @@
 # Radiation physics: preliminary SEU-rate and memory-size estimates
 
-**Author:** Logan Piñeiro. First version, 2026-11-18. Copied here unchanged apart from formatting; review notes are at the end and are not part of Logan's text.
+**Author:** Logan Piñeiro. First version 2026-11-18, update 2026-11-19. Copied here unchanged apart from formatting; review notes are at the end and are not part of Logan's text.
 
 **Status:** feasibility estimates, not beam measurements. Calculations use the team's Geant4 neutron yield, published single-event upset (SEU) cross-sections, and explicitly assumed CLEAR operating parameters. The goal is ~1,000 expected upsets per configuration.
 
@@ -83,6 +83,78 @@ Planning scenario: direct 200 MeV electrons; 0.01 nC/pulse and a uniform 1 cm² 
 3. Coronetti, A., et al. (2020). "SEU Characterization of Commercial and Custom-Designed SRAMs Based on 90 nm Technology and Below." IEEE Radiation Effects Data Workshop. [DOI: 10.1109/REDW51883.2020.9325822](https://doi.org/10.1109/REDW51883.2020.9325822). ISSI 200 MeV electron SEU cross-section: (4.74 ± 2.20) × 10⁻¹⁸ cm²/bit.
 4. NIST CODATA. Elementary charge, exactly 1.602176634 × 10⁻¹⁹ C. [Reference](https://physics.nist.gov/cgi-bin/cuu/Value?e).
 
+## Update 2026-11-19 (Logan)
+
+### 1. Neutron cross-sections
+
+I found the measured neutron upset cross-sections for our ISSI SRAM in Cecchetto et al. (2021), Table III. The measurements cover three different neutron energies, which should help us get a more accurate upset rate using the Geant4 neutron spectrum.
+
+| Neutron energy | Upset cross-section (cm²/bit) |
+|---|---|
+| 0.144 MeV | 3.68 × 10⁻¹⁶ |
+| 1.2 MeV | 1.61 × 10⁻¹⁵ |
+| 17 MeV | 1.91 × 10⁻¹⁴ |
+
+The paper also provides a fitted neutron-response function, which we can use to estimate the cross-section between measured energies.
+
+| Weibull parameter | Value |
+|---|---|
+| Saturation cross-section | 1.40 × 10⁻¹⁴ cm²/bit |
+| Threshold energy | 0.01 MeV |
+| Width | 14.05 MeV |
+| Shape | 0.82 |
+
+Since only around 35% of our simulated neutrons are above 1 MeV, I agree that using the 1.2 MeV cross-section for the entire neutron population could overestimate the upset rate. The remaining neutrons still contribute, but their cross-sections are generally smaller. The next step is integrating this energy-dependent response over the Geant4 spectrum rather than treating every neutron as having the same energy.
+
+Source: Cecchetto et al. (2021), [doi:10.1109/TNS.2021.3064666](https://doi.org/10.1109/TNS.2021.3064666).
+
+### 2. Direct-electron dose and chip survival
+
+I found a 2022 study by Li et al. that tested an ISSI IS61WV204816-family 40 nm SRAM under gamma irradiation. The chip remained functional after an accumulated dose of 10 kGy, although its static supply current approximately doubled.
+
+| Beam time | Pulses at 10 Hz | Accumulated dose |
+|---|---|---|
+| 10 minutes | 6,000 | 102 Gy |
+| 30 minutes | 18,000 | 306 Gy |
+| 1 hour | 36,000 | 612 Gy |
+| 2 hours | 72,000 | 1,224 Gy |
+| One chip, 1,000 expected flips | ~100,736 | ~1.71 kGy |
+| One chip, 2,000 expected flips | ~201,472 | ~3.43 kGy |
+
+Based on these results, the ISSI SRAM looks promising in terms of total dose tolerance. Even the estimated dose needed for 2,000 flips is below the 10 kGy level tested in the paper. However, the published test used gamma irradiation rather than pulsed high-energy electrons, so we'd still need to verify the chip's response under our actual beam conditions. This also doesn't guarantee that the supporting electronics would survive the same exposure.
+
+Source: Li et al. (2022), "Effects of Total Ionizing Dose on Transient Ionizing Radiation Upset Sensitivity of 40–180 nm SRAMs." [doi:10.1063/5.0081576](https://doi.org/10.1063/5.0081576).
+
+### 3. Revised memory requirements vs. beam time
+
+Still using the 1.2 MeV cross-section. Chips needed:
+
+| Neutrons (30 nC/pulse, 10 Hz, 2 cm W, 10 cm Pb) | 50 cm: 1,000 | 50 cm: 2,000 | 30 cm: 1,000 | 30 cm: 2,000 |
+|---|---|---|---|---|
+| 10 min | 12 | 24 | 5 | 9 |
+| 30 min | 4 | 8 | 2 | 3 |
+| 1 hour | 2 | 4 | 1 | 2 |
+| 2 hours | 1 | 2 | 1 | 1 |
+
+| Direct electrons (0.01 nC/pulse, 10 Hz, uniform 1 cm²) | 1,000 flips | 2,000 flips |
+|---|---|---|
+| 10 min | 17 | 34 |
+| 30 min | 6 | 12 |
+| 1 hour | 3 | 6 |
+| 2 hours | 2 | 3 |
+
+The electron numbers are equivalent amounts of exposed memory, not necessarily a practical number of separate chips; adding chips outside the beam wouldn't increase upsets. We'd need to investigate stacking boards along the beam.
+
+### 4. Moving the neutron chips to 30 cm
+
+Moving from 50 cm to 30 cm increases the estimated neutron fluence by approximately 2.7 times (inverse square). We still need to confirm that a chip can be positioned at 30 cm with the proposed shielding: the current Geant4 setup places the outer edge of the 10 cm lead shield at approximately that radius.
+
+### 5. Thermal-neutron sensitivity and polyethylene
+
+The ISSI IS61WV204816BLL-10TLI responds to thermal neutrons. At 3.3 V, the reported thermal-neutron upset cross-section is σ_thermal = (3.16 ± 0.64) × 10⁻¹⁵ cm²/bit.
+
+This matters for the polyethylene configuration because polyethylene moderates neutrons toward thermal energies. One possible mechanism is neutron capture by boron-10, which produces secondary charged particles capable of upsetting memory cells; we'd need more information about the device materials to establish how much comes from boron-10. We shouldn't assume the polyethylene configuration produces fewer upsets simply because the average neutron energy is lower.
+
 ---
 
 ## Review notes (not part of Logan's text)
@@ -93,3 +165,11 @@ All arithmetic above was reproduced independently by `burst_sim/rate_calc.py`. O
 2. **Direct-electron geometry.** In a ~1 cm² beam, extra chips side by side are outside the beam. More memory means stacking boards along the beam, which needs simulating.
 3. **Dose.** 0.01 nC/pulse on 1 cm² is ~0.017 Gy(Si) per pulse: ~100 Gy per 6,000 pulses, ~1.7 kGy for 1,000 flips on one chip. The device's dose tolerance needs checking.
 4. **Run length and flip target.** The layout-blind cluster test needs ~2,000 flips for the weakest clustering simulated. Results are tabulated as chips needed against beam time, for 1,000 and 2,000 flips.
+
+### Notes on the 2026-11-19 update
+
+5. **Fold done.** `rate_calc.py` folds the Weibull fit plus the thermal value (assumed 1/v shape) with each Geant4 spectrum. Behind 10 cm of lead the rate is 0.0112 flips per pulse per chip at 50 cm, 21% below the 1.2 MeV estimate, not up to 3.3× lower. See section 8 of `BURST_preliminary_results.md`.
+6. **Thermal term confirmed important.** Behind 10 cm of polyethylene, 75% of the upsets come from the thermal term.
+7. **Source for σ_thermal found:** Coronetti et al. 2020 ([3] above), Table II: ILL thermal neutrons, 3.3 V, (3.16 ± 0.64) × 10⁻¹⁵ cm²/bit. The same table also confirms the 200 MeV electron value and gives 2.20 × 10⁻¹⁵ at 2.5 MeV and 9.81 × 10⁻¹⁵ at 14.8 MeV (neutrons, ENEA). The Weibull fit gives 3.0 × 10⁻¹⁵ at 2.5 MeV, about 35% above that point, so the folded rate may be slightly high.
+8. **Small correction:** the fraction above 1 MeV behind lead is about 30% once the bin straddling 1 MeV is split properly (35% was a coarser count).
+9. **Direct-beam charge:** the same paper says VESPER's laser gun could go only as low as 30 pC per pulse, and that the flux was kept at the low end to avoid beam artefacts such as localised SEFIs. Logan's 0.01 nC (10 pC) per pulse may be below what CLEAR can deliver; with a 0.5–3 cm spot the fluence per pulse changes too. Worth asking CLEAR.
