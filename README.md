@@ -36,6 +36,8 @@ Everything left until submission, with due dates and a live progress meter: see 
 - The readout can be slow: sweeps of 8 s or even 46 s give the same analysis results as 1 s, so the memory board can sit 20 m away on a simple serial link (`hardware/OPTION_B.md`).
 - Adaptive scrubbing cuts failures from accumulated flips by about 40% but does almost nothing against bursts, and at CLEAR rates there is no accumulation for it to fix.
 
+**Cluster boundary note:** Clusters generated near the edge of the simulated memory array may be truncated by the chip boundary. Their actual sizes can therefore be smaller than their requested target sizes.
+
 ![Decoder result](burst_sim/figures/fig3_decoder.png)
 
 ## Run the simulation

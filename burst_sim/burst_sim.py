@@ -69,32 +69,145 @@ FIG = os.path.join(HERE, "figures")
 os.makedirs(FIG, exist_ok=True)
 
 
-def generate(rng, n_pulses, rate, q=0.0, charge_cv=0.0):
+def make_cluster(rng, r0, c0, k, shape="compact"):
+    """Generate a connected cluster and clip it to the physical memory grid."""
+    if k <= 0:
+        return []
+
+    cells = [(0, 0)]
+    occupied = {(0, 0)}
+
+    if shape == "line":
+        dr, dc = DIRS[rng.integers(0, len(DIRS))]
+        cells = [(i * int(dr), i * int(dc)) for i in range(k)]
+
+    elif shape == "diagonal":
+        directions = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+        dr, dc = directions[rng.integers(0, len(directions))]
+        cells = [(i * dr, i * dc) for i in range(k)]
+
+    elif shape == "compact":
+        # Grow by adding an unoccupied 8-neighbour of an existing cell.
+        neighbours = [
+            (dr, dc)
+            for dr in (-1, 0, 1)
+            for dc in (-1, 0, 1)
+            if (dr, dc) != (0, 0)
+        ]
+
+        while len(cells) < k:
+            base_r, base_c = cells[rng.integers(0, len(cells))]
+            dr, dc = neighbours[rng.integers(0, len(neighbours))]
+            candidate = (base_r + dr, base_c + dc)
+
+            if candidate not in occupied:
+                occupied.add(candidate)
+                cells.append(candidate)
+
+    elif shape == "branch":
+        # Grow from existing cells in one of the four DIRS directions.
+        while len(cells) < k:
+            base_r, base_c = cells[rng.integers(0, len(cells))]
+            dr, dc = DIRS[rng.integers(0, len(DIRS))]
+            candidate = (base_r + int(dr), base_c + int(dc))
+
+            if candidate not in occupied:
+                occupied.add(candidate)
+                cells.append(candidate)
+
+    else:
+        raise ValueError(f"Unknown cluster shape: {shape}")
+
+    # Translate to the seed location and clip at the chip boundary.
+    result = []
+    for dr, dc in cells:
+        row = r0 + dr
+        col = c0 + dc
+
+        if 0 <= row < ROWS and 0 <= col < COLS:
+            result.append((row, col))
+
+    return result
+
+
+def generate(rng, n_pulses, rate, q=0.0, charge_cv=0.0,
+             shape_probs=None):
     """Inject flips. Returns (pulse, row, col, true_cluster_sizes, charge).
 
-    rate      : mean flipped bits per pulse at nominal charge
-    q         : burst strength. Cluster size k has P(k) = (1-q) q^(k-1), so the
-                mean size is 1/(1-q). q = 0 means fully independent flips.
-    charge_cv : pulse-to-pulse relative jitter of the bunch charge (a confound:
-                it makes counts overdispersed with no clustering at all).
+    rate       : mean flipped bits per pulse at nominal charge
+    q          : burst strength. Cluster size k has P(k) = (1-q) q^(k-1)
+    charge_cv  : pulse-to-pulse relative jitter of the bunch charge
+    shape_probs: optional dictionary of cluster shape probabilities.
+                 Defaults to compact clusters only.
     """
+    if not 0 <= q < 1:
+        raise ValueError("q must satisfy 0 <= q < 1")
+
     charge = np.ones(n_pulses)
     if charge_cv > 0:
         shape = 1.0 / charge_cv**2
         charge = rng.gamma(shape, 1.0 / shape, n_pulses)
+
     mean_k = 1.0 / (1.0 - q)
     n_events = rng.poisson(rate / mean_k * charge)
     ev_pulse = np.repeat(np.arange(n_pulses), n_events)
     n_ev = ev_pulse.size
-    k = rng.geometric(1.0 - q, n_ev) if q > 0 else np.ones(n_ev, dtype=int)
-    r0 = rng.integers(0, ROWS, n_ev)
-    c0 = rng.integers(0, COLS, n_ev)
-    d = DIRS[rng.integers(0, 4, n_ev)]
-    idx = np.repeat(np.arange(n_ev), k)
-    step = np.arange(k.sum()) - np.repeat(np.cumsum(k) - k, k)
-    row = (r0[idx] + step * d[idx, 0]) % ROWS
-    col = (c0[idx] + step * d[idx, 1]) % COLS
-    return ev_pulse[idx], row, col, k, charge
+
+    target_sizes = (
+        rng.geometric(1.0 - q, n_ev)
+        if q > 0
+        else np.ones(n_ev, dtype=int)
+    )
+
+    if shape_probs is None:
+        shape_names = ["compact"]
+        probabilities = np.array([1.0])
+    else:
+        if not shape_probs:
+            raise ValueError("shape_probs cannot be empty")
+
+        shape_names = list(shape_probs.keys())
+        probabilities = np.asarray(
+            list(shape_probs.values()), dtype=float
+        )
+
+        if (
+            np.any(probabilities < 0)
+            or not np.all(np.isfinite(probabilities))
+            or not np.isclose(probabilities.sum(), 1.0)
+        ):
+            raise ValueError("shape_probs must be non-negative and sum to 1")
+
+    all_pulses = []
+    all_rows = []
+    all_cols = []
+    actual_sizes = []
+
+    for event in range(n_ev):
+        r0 = int(rng.integers(0, ROWS))
+        c0 = int(rng.integers(0, COLS))
+
+        shape_index = rng.choice(len(shape_names), p=probabilities)
+        cluster_shape = shape_names[shape_index]
+
+        cells = make_cluster(
+            rng, r0, c0, int(target_sizes[event]), cluster_shape
+        )
+
+        actual_sizes.append(len(cells))
+
+        for row, col in cells:
+            all_pulses.append(ev_pulse[event])
+            all_rows.append(row)
+            all_cols.append(col)
+
+    return (
+        np.asarray(all_pulses, dtype=int),
+        np.asarray(all_rows, dtype=int),
+        np.asarray(all_cols, dtype=int),
+        np.asarray(actual_sizes, dtype=int),
+        charge,
+    )
 
 
 def shuffle_control(rng, pulse):
