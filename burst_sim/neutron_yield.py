@@ -1,4 +1,4 @@
-﻿import json
+import json
 from pathlib import Path
 
 ELEMENTARY_CHARGE_C = 1.602176634e-19
@@ -59,3 +59,4 @@ def calculate_neutron_yield():
 
 if __name__ == "__main__":
     calculate_neutron_yield()
+    
