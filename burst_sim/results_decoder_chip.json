@@ -1,0 +1,104 @@
+{
+ "note": "Simulated. Reference chip organisation, Logan's folded rate, assumed line-shaped clusters.",
+ "rate_flips_per_pulse_per_chip": 0.031,
+ "chips": 2,
+ "readout_every_pulses": 10,
+ "accumulation": {
+  "flips_per_chip_per_readout": 0.31,
+  "expected_word_failures_whole_run_with_readout_scrub": 0.00014781951904296878,
+  "expected_word_failures_whole_run_never_scrubbed": 0.476837158203125,
+  "note": "Two independent flips in one codeword. Effectively zero at CLEAR rates, so scrubbing has nothing to fix in this experiment."
+ },
+ "failures_per_1000_flips": {
+  "interleaved": {
+   "1.0": {
+    "word": 0.01665104342010123,
+    "stride, random bits": 0.017101112401769845,
+    "stride, learned bits": 0.020830569353817566,
+    "random-bit stride choices that are bad": 0.0,
+    "signatures learned": 0.0
+   },
+   "1.02": {
+    "word": 0.014612942587142184,
+    "stride, random bits": 0.9956691834500232,
+    "stride, learned bits": 0.029248388644256478,
+    "random-bit stride choices that are bad": 0.33541666666666664,
+    "signatures learned": 4.833333333333333
+   },
+   "1.05": {
+    "word": 0.018732378044102233,
+    "stride, random bits": 2.812175305919751,
+    "stride, learned bits": 0.027055927275178453,
+    "random-bit stride choices that are bad": 0.38333333333333336,
+    "signatures learned": 10.166666666666666
+   },
+   "1.1": {
+    "word": 0.010417480413423585,
+    "stride, random bits": 5.700593897304873,
+    "stride, learned bits": 0.018833750067655062,
+    "random-bit stride choices that are bad": 0.56875,
+    "signatures learned": 15.5
+   },
+   "1.2": {
+    "word": 0.02075251772218376,
+    "stride, random bits": 10.369864404008423,
+    "stride, learned bits": 0.02290800271580602,
+    "random-bit stride choices that are bad": 0.6041666666666666,
+    "signatures learned": 27.5
+   },
+   "1.5": {
+    "word": 0.02921396736926392,
+    "stride, random bits": 23.58930237561762,
+    "stride, learned bits": 0.016682422705092393,
+    "random-bit stride choices that are bad": 0.7583333333333333,
+    "signatures learned": 54.0
+   }
+  },
+  "side_by_side": {
+   "1.0": {
+    "word": 0.00832558613499361,
+    "stride, random bits": 0.01574203293322342,
+    "stride, learned bits": 0.018755748154671008,
+    "random-bit stride choices that are bad": 0.0,
+    "signatures learned": 0.0
+   },
+   "1.02": {
+    "word": 4.549426714628136,
+    "stride, random bits": 0.6004286472248063,
+    "stride, learned bits": 0.0434957827317995,
+    "random-bit stride choices that are bad": 0.20624999999999996,
+    "signatures learned": 1.4166666666666667
+   },
+   "1.05": {
+    "word": 10.606579077926428,
+    "stride, random bits": 1.2700303008112097,
+    "stride, learned bits": 0.010406918289804452,
+    "random-bit stride choices that are bad": 0.19791666666666666,
+    "signatures learned": 2.6666666666666665
+   },
+   "1.1": {
+    "word": 19.86265109978974,
+    "stride, random bits": 2.7334265361205534,
+    "stride, learned bits": 0.027115010668615075,
+    "random-bit stride choices that are bad": 0.31875000000000003,
+    "signatures learned": 3.4166666666666665
+   },
+   "1.2": {
+    "word": 33.533330814279175,
+    "stride, random bits": 5.5039251094088355,
+    "stride, learned bits": 0.006236827493546981,
+    "random-bit stride choices that are bad": 0.39375000000000004,
+    "signatures learned": 6.083333333333333
+   },
+   "1.5": {
+    "word": 53.671690049312694,
+    "stride, random bits": 10.992850402779604,
+    "stride, learned bits": 0.024927254271156163,
+    "random-bit stride choices that are bad": 0.4833333333333332,
+    "signatures learned": 11.75
+   }
+  }
+ },
+ "train_flips": 1000,
+ "test_flips_per_point": 40000
+}

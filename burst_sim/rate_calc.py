@@ -2,8 +2,8 @@
 Upset rates and memory needed, built on Logan's estimate (radiation_estimates.md).
 
 1. Reproduces Logan's numbers exactly, as a check.
-2. Brackets the neutron rate using the simulated energy spectrum behind lead,
-   because the cross-section is only known here at 1.2 MeV.
+2. Folds the measured cross-section curve sigma(E) (Cecchetto 2021 Weibull fit, plus
+   a thermal-neutron term) with the Geant4 spectrum of every configuration.
 3. Tabulates chips needed against beam time, for 1,000 and 2,000 flips.
 4. Dose per pulse for the direct-electron arm.
 
@@ -18,7 +18,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from burst_sim import save, HERE, BLUE, ORANGE, AQUA, INK2
-from flux_sim import load, zone_area_cm2, E_EDGES
+from flux_sim import load, zone_area_cm2, E_EDGES, CONFIGS
 
 E_CHARGE = 1.602176634e-19
 E_PER_NC = 1e-9 / E_CHARGE
@@ -38,11 +38,34 @@ TIMES_MIN = [10, 30, 60, 120, 240]
 TARGETS = [1000, 2000]
 
 
-def neutron_spectrum():
-    """Neutron fluence per electron per cm2 at 80-100 deg, 50 cm, behind W 2 cm + 10 cm lead."""
-    h, n = load(2.0, "lead", 10.0)
+def neutron_spectrum(thick=2.0, shield="lead", sthick=10.0):
+    """Neutron fluence per electron per cm2 per energy bin at 80-100 deg, 50 cm."""
+    h, n = load(thick, shield, sthick)
+    if h is None:
+        return None, 0
     area = zone_area_cm2()[8:10].sum()
     return h[0, 8:10].sum(0) / n / area, int(h[0, 8:10].sum())
+
+
+# Cecchetto 2021 (via Logan): Weibull fit and measured points, ISSI 40 nm SRAM
+WEIBULL = dict(sat=1.40e-14, e0=0.01, w=14.05, s=0.82)       # cm2/bit, MeV, MeV, -
+SIGMA_N_MEASURED = [(0.144, 3.68e-16), (1.2, 1.61e-15), (17.0, 1.91e-14)]
+SIGMA_THERMAL = 3.16e-15            # cm2/bit at 3.3 V, thermal neutrons (Logan's source)
+E_THERMAL = 2.53e-8                 # MeV (0.0253 eV)
+
+
+def weibull(e):
+    x = np.clip(e - WEIBULL["e0"], 0, None)
+    return WEIBULL["sat"] * (1 - np.exp(-(x / WEIBULL["w"]) ** WEIBULL["s"]))
+
+
+def thermal(e):
+    """Assumed 1/v (boron-10-like) capture response, normalised to the thermal value."""
+    return SIGMA_THERMAL * np.sqrt(E_THERMAL / e)
+
+
+def sigma_n(e):
+    return weibull(e) + thermal(e)
 
 
 def chips_needed(flips_per_chip_per_pulse, target, minutes):
@@ -77,10 +100,27 @@ def main():
     e_mid = np.sqrt(E_EDGES[:-1] * E_EDGES[1:])
     res["neutron_spectrum_behind_10cm_lead"] = dict(
         mean_energy_MeV=float((spec * e_mid).sum() / phi_e), fraction=frac)
-    # bounding models for sigma(E): same 1.2 MeV value everywhere above a threshold, 0 below
-    models = {"flat (Logan)": 1.0,
-              "zero below 0.5 MeV": frac["above_0.5_MeV"],
-              "zero below 1 MeV": frac["above_1.0_MeV"]}
+    # folded sigma(E) for every Geant4 configuration (Logan's Cecchetto fit + thermal term)
+    res["sigma_fit_check"] = {str(E): dict(fit=float(sigma_n(np.array(E))), measured=m)
+                              for E, m in SIGMA_N_MEASURED}
+    res["folded"] = {}
+    for label, thick, shield, sthick in CONFIGS:
+        sp, cnt = neutron_spectrum(thick, shield, sthick)
+        if sp is None:
+            continue
+        fast = (sp * weibull(e_mid)).sum()
+        slow = (sp * thermal(e_mid)).sum()
+        per_pulse = CHIP_BITS * E_PER_NC * Q_NEUTRON_NC
+        res["folded"][label] = dict(
+            neutrons_counted=cnt,
+            neutron_per_cm2_per_electron=float(sp.sum()),
+            thermal_fraction_below_0p5eV=float(sp[e_mid < 0.5e-6].sum() / sp.sum()),
+            effective_sigma_cm2_per_bit=float((fast + slow) / sp.sum()),
+            upsets_per_pulse_per_chip_50cm=float((fast + slow) * per_pulse),
+            fraction_from_thermal_term=float(slow / (fast + slow)))
+    lead = res["folded"]["W 2 cm + 10 cm lead"]
+    models = {"flat 1.2 MeV value (Logan)": 1.0,
+              "folded over spectrum": lead["upsets_per_pulse_per_chip_50cm"] / n_rate_flat}
     res["neutron_models"] = {}
     for name, f in models.items():
         for dist in [50, 30]:
@@ -107,7 +147,7 @@ def main():
     # ---- figure: chips needed vs beam time, 2,000 flips ----
     t = np.linspace(10, 240, 200)
     fig, ax = plt.subplots(figsize=(6.4, 3.8))
-    for (name, f), colr in zip(models.items(), [BLUE, AQUA, ORANGE]):
+    for (name, f), colr in zip(models.items(), [BLUE, ORANGE]):
         for dist, ls in [(50, "-"), (30, "--")]:
             r = n_rate_flat * f * (50 / dist) ** 2
             ax.plot(t, np.ceil(2000 / (r * t * 60 * RATE_HZ)), color=colr, ls=ls,
