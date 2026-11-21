@@ -1,0 +1,28 @@
+name: Progress meter
+
+on:
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled]
+  schedule:
+    - cron: "0 6 * * *"        # daily, so "days left" and "overdue" stay current
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+concurrency:
+  group: progress-meter
+  cancel-in-progress: false
+
+jobs:
+  update:
+    # Skip edits to the tracker issue itself (its own update would retrigger this).
+    if: github.event_name != 'issues' || !contains(github.event.issue.labels.*.name, 'tracker')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update tracker issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: python3 .github/scripts/progress.py
