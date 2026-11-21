@@ -43,12 +43,13 @@ def main():
         all_done += done
         all_total += len(tasks)
         frac = done / len(tasks) if tasks else 0
-        rows.append(f"| #{iss['number']} | {done} / {len(tasks)} | `{bar(frac, 10)}` {frac:.0%} |")
+        title = re.sub(r"^\d+ · ", "", iss["title"])
+        rows.append(f"| #{iss['number']} {title} | {done} / {len(tasks)} | `{bar(frac, 10)}` {frac:.0%} |")
         for box, due, text in tasks:
             if box != " ":
                 continue
             d = dt.date.fromisoformat(due)
-            short = re.split(r"\. Done when", text)[0][:110]
+            short = re.split(r"\. Done when", re.sub(r"^\([^)]*\)\s*", "", text))[0][:110]
             item = (d, f"- **{due}** · #{iss['number']} · {short}")
             (overdue if d < today else upcoming).append(item)
     frac = all_done / all_total if all_total else 0
