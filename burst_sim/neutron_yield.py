@@ -1,5 +1,4 @@
-﻿
-import json
+﻿import json
 from pathlib import Path
 
 ELEMENTARY_CHARGE_C = 1.602176634e-19
@@ -39,21 +38,23 @@ def calculate_neutron_yield():
     above_10_mev = (
         side["neutron_above_10MeV_per_cm2"] * electrons
     )
-
-    # Display results.
+    above_10_mev_relative_error = 1.0  
+    # Approx. 100%: based on ~1 simulated neutron
+    # Note: rate_calc.py uses neutron fluence to estimate
+    # the resulting memory upsets. This script only estimates
+    # the neutron yield and fluence.
     print("\nBURST NEUTRON YIELD ESTIMATE")
     print("----------------------------")
     print("Beam energy:", results["beam_energy_MeV"], "MeV")
     print("Scoring distance:", results["score_radius_cm"], "cm")
     print("Configuration:", CONFIGURATION)
     print("Assumed charge:", BEAM_CHARGE_NC, "nC/pulse")
-
     print(f"Electrons per pulse: {electrons:.4e}")
     print(f"Neutrons crossing scoring sphere: {total_neutrons:.4e}")
     print(f"Side neutron fluence: {side_fluence:.2f} n/cm2")
     print(f"Neutrons above 1 MeV: {above_1_mev:.2f} n/cm2")
     print(f"Neutrons above 10 MeV: {above_10_mev:.2f} n/cm2")
-
+    print("Approx. statistical uncertainty above 10 MeV: 100% (~1 simulated neutron)")
     print("\nNOTE: These estimates use assumed beam parameters.")
 
 if __name__ == "__main__":
