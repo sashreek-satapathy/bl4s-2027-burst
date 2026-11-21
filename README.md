@@ -29,6 +29,8 @@ Working repo for our entry to CERN's [Beamline for Schools 2027](https://beamlin
 - With a real 40 nm SRAM and published cross-sections, one 4 MiB chip gets about 0.004 to 0.014 neutron-induced flips per pulse at 30 nC. A few chips and an hour or two of beam give 2,000 flips.
 - Adaptive scrubbing cuts failures from accumulated flips by about 40% but does almost nothing against bursts.
 
+**Cluster boundary note:** Clusters generated near the edge of the simulated memory array may be truncated by the chip boundary. Their actual sizes can therefore be smaller than their requested target sizes.
+
 ![Decoder result](burst_sim/figures/fig3_decoder.png)
 
 ## Run the simulation
