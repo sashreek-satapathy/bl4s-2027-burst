@@ -11,33 +11,33 @@
    "fano_expected_from_injection": 1.0
   },
   "bursty (mean cluster 1.5)": {
-   "fano": 2.026768259999908,
-   "p_value": 0.0,
-   "fano_charge_normalised": 2.026768259999908,
-   "p_value_charge_normalised": 0.0,
+   "fano": 1.9659041382255378,
+   "p_value": 8.50368683e-315,
+   "fano_charge_normalised": 1.9659041382255378,
+   "p_value_charge_normalised": 8.50368683e-315,
    "fano_expected_from_injection": 1.9999999999999998
   },
   "independent + 10% charge jitter": {
-   "fano": 1.2042882244881075,
-   "p_value": 4.231003309989138e-22,
-   "fano_charge_normalised": 1.0028213116876619,
-   "p_value_charge_normalised": 0.44133460701199556,
+   "fano": 1.2095448909413897,
+   "p_value": 4.351242614661822e-23,
+   "fano_charge_normalised": 1.0204706564931099,
+   "p_value_charge_normalised": 0.15310836707730158,
    "fano_expected_from_injection": 1.2
   }
  },
  "spatial": {
-  "flips": 100377,
-  "injected_mean_cluster": 1.4972032874423877,
-  "recovered_mean_cluster": 1.4961544194365777,
-  "shuffled_mean_cluster": 1.000039851354448,
-  "injected_multi_cell_fraction": 0.33268201005324943,
-  "recovered_multi_cell_fraction": 0.3321657475033537,
-  "adjacent_pairs_observed": 33287,
-  "adjacent_pairs_expected_if_independent": 2.6351231166294644,
+  "flips": 99631,
+  "injected_mean_cluster": 1.5007832976832465,
+  "recovered_mean_cluster": 1.5007606910991609,
+  "shuffled_mean_cluster": 1.0,
+  "injected_multi_cell_fraction": 0.33537191576537223,
+  "recovered_multi_cell_fraction": 0.3353518008043744,
+  "adjacent_pairs_observed": 39338,
+  "adjacent_pairs_expected_if_independent": 2.5707310267857144,
   "adjacency_p_value": 0.0,
-  "shuffled_adjacent_pairs_observed": 4,
-  "shuffled_adjacent_pairs_expected": 2.6351231166294644,
-  "shuffled_p_value": 0.27166015310142316
+  "shuffled_adjacent_pairs_observed": 0,
+  "shuffled_adjacent_pairs_expected": 2.5707310267857144,
+  "shuffled_p_value": 1.0
  },
  "decoder": {
   "pulses": 20000,
@@ -45,52 +45,52 @@
   "rows": [
    {
     "mean_cluster": 1.0,
-    "flips": 399836,
-    "contiguous": 27,
-    "interleaved": 27,
-    "shuffled": 21
+    "flips": 399486,
+    "contiguous": 33,
+    "interleaved": 33,
+    "shuffled": 24
    },
    {
     "mean_cluster": 1.0204081632653061,
-    "flips": 401175,
-    "contiguous": 1724,
-    "interleaved": 41,
-    "shuffled": 31
+    "flips": 400351,
+    "contiguous": 1781,
+    "interleaved": 28,
+    "shuffled": 23
    },
    {
     "mean_cluster": 1.0526315789473684,
-    "flips": 400974,
-    "contiguous": 4172,
-    "interleaved": 29,
-    "shuffled": 33
+    "flips": 400704,
+    "contiguous": 4489,
+    "interleaved": 24,
+    "shuffled": 26
    },
    {
     "mean_cluster": 1.1111111111111112,
-    "flips": 400583,
-    "contiguous": 7965,
-    "interleaved": 36,
-    "shuffled": 20
-   },
-   {
-    "mean_cluster": 1.25,
-    "flips": 400117,
-    "contiguous": 14265,
-    "interleaved": 25,
+    "flips": 398223,
+    "contiguous": 9203,
+    "interleaved": 22,
     "shuffled": 31
    },
    {
+    "mean_cluster": 1.25,
+    "flips": 398972,
+    "contiguous": 19557,
+    "interleaved": 36,
+    "shuffled": 30
+   },
+   {
     "mean_cluster": 1.4999999999999998,
-    "flips": 397937,
-    "contiguous": 20371,
-    "interleaved": 31,
-    "shuffled": 37
+    "flips": 400279,
+    "contiguous": 35518,
+    "interleaved": 24,
+    "shuffled": 23
    },
    {
     "mean_cluster": 2.0,
-    "flips": 399906,
-    "contiguous": 24995,
-    "interleaved": 22,
-    "shuffled": 32
+    "flips": 399984,
+    "contiguous": 57952,
+    "interleaved": 25,
+    "shuffled": 28
    }
   ],
   "independent_model_prediction": 26.157924107142858
@@ -114,12 +114,12 @@
    "1.02": null,
    "1.05": 50000,
    "1.1": 10000,
-   "1.2": 5000,
+   "1.2": 2000,
    "1.5": 500
   },
   "flips_needed_adjacency": {
    "1.02": 500,
-   "1.05": 200,
+   "1.05": 100,
    "1.1": 100,
    "1.2": 100,
    "1.5": 100
@@ -127,53 +127,53 @@
   "curves": {
    "fano": {
     "1.02": [
+     0.0033333333333333335,
      0.0,
      0.0033333333333333335,
-     0.006666666666666667,
-     0.0033333333333333335,
-     0.0033333333333333335,
+     0.01,
      0.006666666666666667,
      0.03666666666666667,
-     0.12333333333333334,
-     0.3933333333333333
+     0.03333333333333333,
+     0.08666666666666667,
+     0.39
     ],
     "1.05": [
-     0.006666666666666667,
-     0.013333333333333334,
-     0.0,
-     0.023333333333333334,
-     0.03,
-     0.13,
-     0.4766666666666667,
-     0.8633333333333333,
+     0.0033333333333333335,
+     0.01,
+     0.016666666666666666,
+     0.02666666666666667,
+     0.07,
+     0.18333333333333332,
+     0.4866666666666667,
+     0.87,
      1.0
     ],
     "1.1": [
-     0.0033333333333333335,
      0.016666666666666666,
-     0.06333333333333334,
-     0.13666666666666666,
-     0.3333333333333333,
-     0.87,
-     0.9966666666666667,
+     0.013333333333333334,
+     0.05,
+     0.14666666666666667,
+     0.32,
+     0.86,
+     0.9933333333333333,
      1.0,
      1.0
     ],
     "1.2": [
-     0.03,
-     0.07666666666666666,
-     0.2733333333333333,
-     0.6266666666666667,
-     0.9466666666666667,
+     0.02,
+     0.08666666666666667,
+     0.30666666666666664,
+     0.66,
+     0.97,
      1.0,
      1.0,
      1.0,
      1.0
     ],
     "1.5": [
-     0.26,
-     0.59,
-     0.9733333333333334,
+     0.2866666666666667,
+     0.6333333333333333,
+     0.9633333333333334,
      1.0,
      1.0,
      1.0,
@@ -184,8 +184,8 @@
    },
    "adjacency": {
     "1.02": [
-     0.5866666666666667,
-     0.9066666666666666,
+     0.5533333333333333,
+     0.8933333333333333,
      1.0,
      1.0,
      1.0,
@@ -195,7 +195,7 @@
      1.0
     ],
     "1.05": [
-     0.9466666666666667,
+     0.95,
      1.0,
      1.0,
      1.0,
@@ -206,7 +206,7 @@
      1.0
     ],
     "1.1": [
-     0.99,
+     1.0,
      1.0,
      1.0,
      1.0,
@@ -241,8 +241,8 @@
    }
   },
   "false_positive_rate_at_0.05": {
-   "fano": 0.059,
-   "adjacency": 0.042
+   "fano": 0.0465,
+   "adjacency": 0.041
   }
  },
  "adaptive_scrub": {
@@ -254,68 +254,68 @@
     "150": {
      "scrubs_fixed": 150,
      "scrubs_adaptive": 150,
-     "fixed": 33748,
-     "adaptive": 21010,
-     "fixed_contiguous": 33361,
-     "adaptive_contiguous": 20759
+     "fixed": 33363,
+     "adaptive": 20881,
+     "fixed_contiguous": 33418,
+     "adaptive_contiguous": 20866
     },
     "300": {
      "scrubs_fixed": 300,
      "scrubs_adaptive": 300,
-     "fixed": 17441,
-     "adaptive": 10662,
-     "fixed_contiguous": 17229,
-     "adaptive_contiguous": 10501
+     "fixed": 17327,
+     "adaptive": 10570,
+     "fixed_contiguous": 17446,
+     "adaptive_contiguous": 10683
     },
     "600": {
      "scrubs_fixed": 600,
      "scrubs_adaptive": 600,
-     "fixed": 8937,
-     "adaptive": 5373,
-     "fixed_contiguous": 8764,
-     "adaptive_contiguous": 5348
+     "fixed": 8739,
+     "adaptive": 5311,
+     "fixed_contiguous": 8907,
+     "adaptive_contiguous": 5477
     },
     "1200": {
      "scrubs_fixed": 1200,
      "scrubs_adaptive": 1200,
-     "fixed": 4484,
-     "adaptive": 2767,
-     "fixed_contiguous": 4442,
-     "adaptive_contiguous": 2672
+     "fixed": 4308,
+     "adaptive": 2675,
+     "fixed_contiguous": 4511,
+     "adaptive_contiguous": 2767
     }
    },
    "bursty (mean cluster 1.5)": {
     "150": {
      "scrubs_fixed": 150,
      "scrubs_adaptive": 150,
-     "fixed": 33600,
-     "adaptive": 20934,
-     "fixed_contiguous": 76369,
-     "adaptive_contiguous": 67191
+     "fixed": 33091,
+     "adaptive": 20633,
+     "fixed_contiguous": 106752,
+     "adaptive_contiguous": 99022
     },
     "300": {
      "scrubs_fixed": 300,
      "scrubs_adaptive": 300,
-     "fixed": 17424,
-     "adaptive": 10595,
-     "fixed_contiguous": 64479,
-     "adaptive_contiguous": 59453
+     "fixed": 17116,
+     "adaptive": 10427,
+     "fixed_contiguous": 96764,
+     "adaptive_contiguous": 92628
     },
     "600": {
      "scrubs_fixed": 600,
      "scrubs_adaptive": 600,
-     "fixed": 8814,
-     "adaptive": 5337,
-     "fixed_contiguous": 58117,
-     "adaptive_contiguous": 55572
+     "fixed": 8729,
+     "adaptive": 5301,
+     "fixed_contiguous": 91480,
+     "adaptive_contiguous": 89401
     },
     "1200": {
      "scrubs_fixed": 1200,
      "scrubs_adaptive": 1200,
-     "fixed": 4442,
-     "adaptive": 2704,
-     "fixed_contiguous": 54849,
-     "adaptive_contiguous": 53614
+     "fixed": 4426,
+     "adaptive": 2734,
+     "fixed_contiguous": 88792,
+     "adaptive_contiguous": 87712
     }
    }
   }
